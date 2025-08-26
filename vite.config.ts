@@ -7,7 +7,7 @@ import { resolve } from 'path'
 export default defineConfig({
   plugins: [vue()],
   base: process.env.VITE_IS_GITHUB_PAGES ? '/neco/' : '/',
-  
+
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src')

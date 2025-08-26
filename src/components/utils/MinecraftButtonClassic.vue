@@ -1,0 +1,54 @@
+<script lang="ts" setup>
+const soundOn = () => {
+  const audio = new Audio(
+    'https://unpkg.com/minecraft-framework-css@1.1.5/css/assets/random.click.ogg',
+  )
+  audio.play()
+  audio.volume = 0.3
+}
+</script>
+
+<template>
+  <div class="minecraft-button-classic" :onclick="soundOn">
+    <div class="title">
+      <slot></slot>
+    </div>
+  </div>
+</template>
+
+<style lang="css">
+.minecraft-button-classic {
+  height: 3rem;
+  width: 100%;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+  user-select: none;
+  background: #999 url("/background/bgbtn.png") center/cover;
+  image-rendering: pixelated;
+  border: 2px solid #000;
+}
+
+.minecraft-button-classic:hover .title {
+  background-color: rgba(100, 100, 255, .45);
+  text-shadow: 2px 2px #202013CC;
+  color: #FFFFA0;
+}
+
+.minecraft-button-classic:active .title {
+  box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%; height: 100%;
+  padding-bottom: .3em;
+
+  color: #DDD;
+  text-shadow: 2px 2px #000A;
+  box-shadow: inset -2px -4px #0006, inset 2px 2px #FFF7;
+}
+</style>
