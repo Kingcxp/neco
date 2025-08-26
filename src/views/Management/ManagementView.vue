@@ -11,18 +11,30 @@ const logout = () => {}
     <div class="management-menu">
       <img class="management-logo" src="/nmo-logo-large.png" />
       <span class="management-title">NMO - 管理后台</span>
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/user')">用户管理</MinecraftButtonClassic>
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/club')">社团管理</MinecraftButtonClassic>
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/server')">服务器信息</MinecraftButtonClassic>
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/activity')">活动管理</MinecraftButtonClassic>
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/news')">新闻管理</MinecraftButtonClassic>
+      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/user')"
+        >用户管理</MinecraftButtonClassic
+      >
+      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/club')"
+        >社团管理</MinecraftButtonClassic
+      >
+      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/server')"
+        >服务器信息</MinecraftButtonClassic
+      >
+      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/activity')"
+        >活动管理</MinecraftButtonClassic
+      >
+      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/news')"
+        >新闻管理</MinecraftButtonClassic
+      >
 
       <div style="display: flex; flex-direction: column; margin-top: auto">
-        <MinecraftButtonClassic class="management-nav" @click="router.push('/auth/account')">我的账号</MinecraftButtonClassic>
+        <MinecraftButtonClassic class="management-nav" @click="router.push('/auth/account')"
+          >我的账号</MinecraftButtonClassic
+        >
         <MinecraftButtonClassic class="management-nav" @click="logout">登出</MinecraftButtonClassic>
       </div>
     </div>
-    <RouterView/>
+    <RouterView />
   </div>
 </template>
 <style lang="css" scoped>

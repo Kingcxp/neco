@@ -24,19 +24,21 @@ const soundOn = () => {
   overflow: hidden;
   white-space: nowrap;
   user-select: none;
-  background: #999 url("/background/bgbtn.png") center/cover;
+  background: #999 url('/background/bgbtn.png') center/cover;
   image-rendering: pixelated;
   border: 2px solid #000;
 }
 
 .minecraft-button-classic:hover .title {
-  background-color: rgba(100, 100, 255, .45);
-  text-shadow: 2px 2px #202013CC;
-  color: #FFFFA0;
+  background-color: rgba(100, 100, 255, 0.45);
+  text-shadow: 2px 2px #202013cc;
+  color: #ffffa0;
 }
 
 .minecraft-button-classic:active .title {
-  box-shadow: inset -2px -4px #0004, inset 2px 2px #FFF5;
+  box-shadow:
+    inset -2px -4px #0004,
+    inset 2px 2px #fff5;
 }
 
 .title {
@@ -44,11 +46,14 @@ const soundOn = () => {
   align-items: center;
   justify-content: center;
 
-  width: 100%; height: 100%;
-  padding-bottom: .3em;
+  width: 100%;
+  height: 100%;
+  padding-bottom: 0.3em;
 
-  color: #DDD;
-  text-shadow: 2px 2px #000A;
-  box-shadow: inset -2px -4px #0006, inset 2px 2px #FFF7;
+  color: #ddd;
+  text-shadow: 2px 2px #000a;
+  box-shadow:
+    inset -2px -4px #0006,
+    inset 2px 2px #fff7;
 }
 </style>

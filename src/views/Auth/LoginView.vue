@@ -66,8 +66,12 @@ onMounted(() => {
       <MinecraftInput class="login-input" v-model="form.username" placeholder="用户名" />
       <MinecraftInput class="login-input" v-model="form.password" placeholder="密码" />
       <div class="button-area">
-        <MinecraftButtonClassic class="login-btn" @click="router.replace('/auth/register')">去注册</MinecraftButtonClassic>
-        <MinecraftButtonClassic class="login-btn" style="margin-left: 2rem;" @click="onLogin">登录</MinecraftButtonClassic>
+        <MinecraftButtonClassic class="login-btn" @click="router.replace('/auth/register')"
+          >去注册</MinecraftButtonClassic
+        >
+        <MinecraftButtonClassic class="login-btn" style="margin-left: 2rem" @click="onLogin"
+          >登录</MinecraftButtonClassic
+        >
       </div>
     </div>
   </div>
@@ -93,7 +97,7 @@ onMounted(() => {
 
   background-size: cover;
   background-position: center;
-  transition: opacity .4s ease-in-out;
+  transition: opacity 0.4s ease-in-out;
 }
 
 .login-panel {
