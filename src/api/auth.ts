@@ -17,6 +17,10 @@ export const LoginStatus = async (): Promise<string> => {
     .get(`/auth/status`)
     .then((response) => {
       result = response.data.status
+      if (result == 'dead') {
+        localStorage.removeItem('token')
+        localStorage.removeItem('username')
+      }
     })
     .catch((e) => {
       toast.error(`请求错误：${e}`)
@@ -25,7 +29,7 @@ export const LoginStatus = async (): Promise<string> => {
 }
 
 export const authorized = async () => {
-  let status = await LoginStatus()
+  const status = await LoginStatus()
   return !(localStorage.getItem('token') == '') && status == "alive"
 }
 
@@ -67,6 +71,104 @@ export const CreateUser = async (username: string, password: string): Promise<st
     })
     .catch((e) => {
       toast.error(`请求错误：${e}`)
+      result = e
+    })
+  return result
+}
+
+export const GetUserInfo = async (username: string): Promise<UserEntity | null> => {
+  let result: UserEntity | null = null
+  await api
+    .get(`/auth/user/${username}`)
+    .then((response) => {
+      result = response.data.user as UserEntity
+    })
+    .catch((e) => {
+      toast.error(`请求错误：${e}`)
+    })
+  return result
+}
+
+export const GetUserList = async (): Promise<Array<UserEntity> | null> => {
+  let result: Array<UserEntity> | null = null
+  await api
+    .get(`/auth/userlist`)
+    .then((response) => {
+      result = response.data.users as Array<UserEntity>
+    })
+    .catch((e) => {
+      toast.error(`请求错误：${e}`)
+    })
+  return result
+}
+
+export const DeleteUser = async (username: string): Promise<string | null> => {
+  let result: string | null = null
+  await api
+    .delete(`/auth/user/${username}`)
+    .then((response) => {
+      if (response.data.error) {
+        result = response.data.error
+      }
+    })
+    .catch((e) => {
+      toast.error(`请求错误：${e}`)
+      result = e
+    })
+  return result
+}
+
+export const UpdatePassword = async (username: string, password: string): Promise<string | null> => {
+  let result: string | null = null
+  await api
+    .post(`/auth/user/${username}/password`, {
+      id: username,
+      new_password: password,
+    })
+    .then((response) => {
+      if (response.data.error) {
+        result = response.data.error
+      }
+    })
+    .catch((e) => {
+      toast.error(`请求错误：${e}`)
+      result = e
+    })
+  return result
+}
+
+export const UpdateUserInfo = async (username: string, group: Array<string>, department: Array<string>): Promise<string | null> => {
+  let result: string | null = null
+  await api
+    .patch(`/auth/user`, {
+      username: username,
+      group: group,
+      department: department,
+    })
+    .then((response) => {
+      if (response.data.error) {
+        result = response.data.error
+      }
+    })
+    .catch((e) => {
+      toast.error(`请求错误：${e}`)
+      result = e
+    })
+  return result
+}
+
+export const Logout = async (): Promise<string | null> => {
+  let result: string | null = null
+  await api
+    .post(`/auth/logout`)
+    .then((response) => {
+      if (response.data.error) {
+        result = response.data.error
+      }
+    })
+    .catch((e) => {
+      toast.error(`请求错误：${e}`)
+      result = e
     })
   return result
 }
