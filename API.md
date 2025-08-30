@@ -20,7 +20,7 @@
 
 ### Auth
 
-User group includes ["admin", "news_admin", "activity_admin"]. If empty, the user doesn't have permission to manage corresponding resources.
+User group includes ["admin", "news_admin", "activity_admin"]. If empty, the user doesn"t have permission to manage corresponding resources.
 
 Auth uses JWT Token.
 
@@ -58,6 +58,11 @@ Auth uses JWT Token.
         "username": "string",
         "group": "string[]",
         "department": "string[]",
+        "tags": [{
+            "text": "string",
+            "color": "string",
+            "tagColor": "string",
+        }, ...]
     },
     "error": "string" // if error
 }
@@ -88,6 +93,24 @@ Only Admin can create accounts.
 }
 ```
 
+#### User Avatar
+
+- auth
+
+Any user
+
+- request
+
+`GET /auth/avatar/:id`
+
+- response
+
+```json
+{
+    "avatar": "string"
+}
+```
+
 #### User Info
 
 - auth
@@ -106,6 +129,11 @@ Current user or Admin
         "username": "string",
         "group": "string[]",
         "department": "string[]",
+        "tags": [{
+            "text": "string",
+            "color": "string",
+            "tagColor": "string",
+        }, ...]
     },
 }
 ```
@@ -129,6 +157,11 @@ Only Admin can see all users.
             "username": "string",
             "group": "string[]",
             "department": "string[]",
+            "tags": [{
+                "text": "string",
+                "color": "string",
+                "tagColor": "string",
+            }, ...]
         },
     ],
 }
@@ -165,7 +198,33 @@ User can update their own password. Admin can change password of others.
 ```json
 {
     "id": "string",
+    "self_password": "string",
     "new_password": "string",
+}
+```
+
+#### Update Avatar
+
+- auth
+
+User can update their own avatar.
+
+- request
+
+`POST /auth/avatar`
+
+```json
+{
+    "username": "string",
+    "avatar": "string"
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
 }
 ```
 

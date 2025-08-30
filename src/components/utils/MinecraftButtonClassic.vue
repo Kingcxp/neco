@@ -16,7 +16,7 @@ const soundOn = () => {
   </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .minecraft-button-classic {
   height: 3rem;
   width: 100%;

@@ -21,7 +21,7 @@ const soundOn = () => {
   />
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .minecraft-switch {
   appearance: none;
   color: transparent;

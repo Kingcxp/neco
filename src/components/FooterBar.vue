@@ -29,7 +29,7 @@ onMounted(async () => {
         NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT
       </span>
 
-      <RouterLink id="management" to="/management" style="user-select: none">后台</RouterLink>
+      <RouterLink id="management" to="/management/user">后台</RouterLink>
     </div>
 
     <div class="footer-links">
@@ -76,6 +76,8 @@ onMounted(async () => {
 }
 
 .footer-description #management {
+  user-select: none;
+  width: fit-content;
   font-size: 0.8rem;
   color: gray;
 }

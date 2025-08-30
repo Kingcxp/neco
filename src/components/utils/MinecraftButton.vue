@@ -14,7 +14,7 @@ const soundOn = () => {
   </div>
 </template>
 
-<style lang="css">
+<style lang="css" scoped>
 .minecraft-button {
   user-select: none;
   display: flex;
@@ -39,7 +39,7 @@ const soundOn = () => {
 
 .minecraft-button:active {
   background-color: #8b8b8b;
-  border-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/button-pressed-hover.png')
+  border-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/button_pressed_hover.png')
     1;
 }
 

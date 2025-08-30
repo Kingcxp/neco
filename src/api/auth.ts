@@ -3,10 +3,18 @@ import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 
+export interface UserTag {
+  text: string,
+  color: string,
+  tagColor: string,
+}
+
 export interface UserEntity {
   username: string,
+  avatar: string,
   group: Array<string>,
   department: Array<string>
+  tags: Array<UserTag>
 }
 
 export type UserStatus = "alive" | "dead" | "unknown"
@@ -20,15 +28,16 @@ export const LoginStatus = async (): Promise<string> => {
       if (result == 'dead') {
         localStorage.removeItem('token')
         localStorage.removeItem('username')
+        localStorage.removeItem('userGroup')
+        localStorage.removeItem('userDepartment')
+        localStorage.removeItem('userTags')
       }
     })
-    .catch((e) => {
-      toast.error(`请求错误：${e}`)
-    })
+    .catch(() => {})
   return result
 }
 
-export const authorized = async () => {
+export const CheckAuthorized = async () => {
   const status = await LoginStatus()
   return !(localStorage.getItem('token') == '') && status == "alive"
 }
@@ -48,12 +57,13 @@ export const Login = async (username: string, password: string): Promise<LoginEn
     })
     .then((response) => {
       localStorage.setItem('token', response.data.token)
-      localStorage.setItem('username', response.data.user)
+      localStorage.setItem('username', response.data.user?.username)
+      localStorage.setItem('userGroup', JSON.stringify(response.data.user?.group || []))
+      localStorage.setItem('userDepartment', JSON.stringify(response.data.user?.department || []))
+      localStorage.setItem('userTags', JSON.stringify(response.data.user?.tags || []))
       result = response.data as LoginEntity
     })
-    .catch((e) => {
-      toast.error(`请求错误：${e}`)
-    })
+    .catch(() => {})
   return result
 }
 
@@ -70,7 +80,6 @@ export const CreateUser = async (username: string, password: string): Promise<st
       }
     })
     .catch((e) => {
-      toast.error(`请求错误：${e}`)
       result = e
     })
   return result
@@ -83,9 +92,7 @@ export const GetUserInfo = async (username: string): Promise<UserEntity | null> 
     .then((response) => {
       result = response.data.user as UserEntity
     })
-    .catch((e) => {
-      toast.error(`请求错误：${e}`)
-    })
+    .catch(() => {})
   return result
 }
 
@@ -96,9 +103,7 @@ export const GetUserList = async (): Promise<Array<UserEntity> | null> => {
     .then((response) => {
       result = response.data.users as Array<UserEntity>
     })
-    .catch((e) => {
-      toast.error(`请求错误：${e}`)
-    })
+    .catch(() => {})
   return result
 }
 
@@ -112,17 +117,17 @@ export const DeleteUser = async (username: string): Promise<string | null> => {
       }
     })
     .catch((e) => {
-      toast.error(`请求错误：${e}`)
       result = e
     })
   return result
 }
 
-export const UpdatePassword = async (username: string, password: string): Promise<string | null> => {
+export const UpdatePassword = async (username: string, selfPassword: string, password: string): Promise<string | null> => {
   let result: string | null = null
   await api
     .post(`/auth/user/${username}/password`, {
       id: username,
+      self_password: selfPassword,
       new_password: password,
     })
     .then((response) => {
@@ -131,19 +136,19 @@ export const UpdatePassword = async (username: string, password: string): Promis
       }
     })
     .catch((e) => {
-      toast.error(`请求错误：${e}`)
       result = e
     })
   return result
 }
 
-export const UpdateUserInfo = async (username: string, group: Array<string>, department: Array<string>): Promise<string | null> => {
+export const UpdateUserInfo = async (username: string, group: Array<string>, department: Array<string>, tags: Array<UserTag>): Promise<string | null> => {
   let result: string | null = null
   await api
     .patch(`/auth/user`, {
       username: username,
       group: group,
       department: department,
+      tags: tags
     })
     .then((response) => {
       if (response.data.error) {
@@ -151,9 +156,19 @@ export const UpdateUserInfo = async (username: string, group: Array<string>, dep
       }
     })
     .catch((e) => {
-      toast.error(`请求错误：${e}`)
       result = e
     })
+  if (localStorage.getItem('username') == username) {
+    const userInfo = await GetUserInfo(username)
+    if (userInfo) {
+      localStorage.setItem('username', userInfo.username)
+      localStorage.setItem('userGroup', JSON.stringify(userInfo.group))
+      localStorage.setItem('userDepartment', JSON.stringify(userInfo.department))
+      localStorage.setItem('userTags', JSON.stringify(userInfo.tags))
+    } else {
+      toast.error(`获取用户信息失败！`)
+    }
+  }
   return result
 }
 
@@ -167,7 +182,35 @@ export const Logout = async (): Promise<string | null> => {
       }
     })
     .catch((e) => {
-      toast.error(`请求错误：${e}`)
+      result = e
+    })
+  return result
+}
+
+export const GetAvatar = async (username: string): Promise<string | null> => {
+  let result: string | null = null
+  await api
+    .get(`/auth/avatar/${username}`)
+    .then((response) => {
+      result = response.data.avatar
+    })
+    .catch(() => {})
+  return result
+}
+
+export const UpdateAvatar = async (username: string, avatar: string): Promise<string | null> => {
+  let result: string | null = null
+  await api
+    .post(`/auth/avatar`, {
+      username: username,
+      avatar: avatar,
+    })
+    .then((response) => {
+      if (response.data.error) {
+        result = response.data.error
+      }
+    })
+    .catch((e) => {
       result = e
     })
   return result
