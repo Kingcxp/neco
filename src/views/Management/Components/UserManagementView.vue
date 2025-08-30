@@ -2,50 +2,52 @@
 import {
   GetAvatar,
   GetUserList,
+  UpdateAvatar,
   UpdatePassword,
   UpdateUserInfo,
   type UserEntity,
 } from '@/api/auth'
 import MinecraftButtonClassic from '@/components/utils/MinecraftButtonClassic.vue'
+import MinecraftDialog from '@/components/utils/MinecraftDialog.vue'
 import MinecraftInput from '@/components/utils/MinecraftInput.vue'
 import { onMounted, ref, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 
-// const toBase64 = async (image: File): Promise<string> => {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader()
+const toBase64 = async (image: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
 
-//     reader.onload = () => {
-//       const base64str = reader.result as string
-//       resolve(base64str)
-//     }
+    reader.onload = () => {
+      const base64str = reader.result as string
+      resolve(base64str)
+    }
 
-//     reader.onerror = reject
+    reader.onerror = reject
 
-//     reader.readAsDataURL(image)
-//   })
-// }
+    reader.readAsDataURL(image)
+  })
+}
 
-// const triggerUploadBase64 = (): Promise<string> => {
-//   return new Promise((resolve, reject) => {
-//     const input = document.createElement('input')
-//     input.type = 'file'
-//     input.accept = 'image/*'
-//     input.click()
+const triggerUploadBase64 = (): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = 'image/*'
+    input.click()
 
-//     input.onchange = async () => {
-//       const image = input.files?.[0]
-//       if (!image) return reject(new Error('No image selected'))
+    input.onchange = async () => {
+      const image = input.files?.[0]
+      if (!image) return reject(new Error('No image selected'))
 
-//       try {
-//         const base64str = await toBase64(image)
-//         resolve(base64str)
-//       } catch (error) {
-//         reject(error)
-//       }
-//     }
-//   })
-// }
+      try {
+        const base64str = await toBase64(image)
+        resolve(base64str)
+      } catch (error) {
+        reject(error)
+      }
+    }
+  })
+}
 
 const toast = useToast()
 
@@ -135,25 +137,25 @@ const onChangePassword = async () => {
   }
 }
 
-// const onChangeAvatar = async () => {
-//   try {
-//     const base64str = await triggerUploadBase64()
-//     const result = await UpdateAvatar(username, base64str)
-//     if (result) {
-//       toast.error('上传头像失败！')
-//       return
-//     }
-//   } catch (e) {
-//     toast.error(`上传文件失败：${e}！`)
-//     return
-//   }
-//   const result = await GetAvatar(username)
-//   if (!result) {
-//     toast.warning('获取头像失败！')
-//     return
-//   }
-//   avatar.value = result
-// }
+const onChangeAvatar = async () => {
+  try {
+    const base64str = await triggerUploadBase64()
+    const result = await UpdateAvatar(username, base64str)
+    if (result) {
+      toast.error('上传头像失败！')
+      return
+    }
+  } catch (e) {
+    toast.error(`上传文件失败：${e}！`)
+    return
+  }
+  const result = await GetAvatar(username)
+  if (!result) {
+    toast.warning('获取头像失败！')
+    return
+  }
+  avatar.value = result
+}
 
 const users = ref<Array<UserEntity> | null>([])
 const searchKeyword = ref('')
@@ -164,6 +166,8 @@ const filteredUsers = computed(() => {
     user.username.toLowerCase().includes(searchKeyword.value.toLowerCase()),
   )
 })
+
+const editUserDialogVisible = ref(true)
 
 onMounted(async () => {
   if (userGroup.includes('admin')) {
@@ -382,6 +386,17 @@ onMounted(async () => {
       </div>
     </div>
   </form>
+
+  <MinecraftDialog v-model="editUserDialogVisible">
+    <div class="change-user-info-container">
+      <div class="change-user-info-item">
+        <text class="change-user-info-title">头像</text>
+        <picture class="user-avatar" @click="onChangeAvatar">
+          <img class="avatar-img" style="width: 4rem; height: 4rem" :src="avatar" alt="用户头像" />
+        </picture>
+      </div>
+    </div>
+  </MinecraftDialog>
 </template>
 
 <style lang="css" scoped>
@@ -392,8 +407,9 @@ onMounted(async () => {
 }
 
 .user-avatar {
-  width: 6rem;
-  height: 6rem;
+  margin-left: 1rem;
+  width: 4rem;
+  height: 4rem;
   overflow: hidden;
   border-radius: 50%;
   outline: 2px solid var(--minecraft-gray-light);
@@ -560,6 +576,23 @@ onMounted(async () => {
 .user-info-group-item {
   font-size: 0.8rem;
   text-wrap: nowrap;
+  user-select: none;
+}
+
+.change-user-info-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+}
+
+.change-user-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.change-user-info-title {
+  font-size: 1.2rem;
+  color: white;
   user-select: none;
 }
 </style>

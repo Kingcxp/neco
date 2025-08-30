@@ -228,6 +228,7 @@ onMounted(async () => {
   font-size: 1rem;
   margin-bottom: 0.5rem;
   font-weight: 500;
+  text-wrap: nowrap;
 }
 
 .news-detail-author-name-container {
