@@ -2,7 +2,6 @@
 import {
   GetAvatar,
   GetUserList,
-  UpdateAvatar,
   UpdatePassword,
   UpdateUserInfo,
   type UserEntity,
@@ -12,41 +11,41 @@ import MinecraftInput from '@/components/utils/MinecraftInput.vue'
 import { onMounted, ref, computed } from 'vue'
 import { useToast } from 'vue-toastification'
 
-const toBase64 = async (image: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
+// const toBase64 = async (image: File): Promise<string> => {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader()
 
-    reader.onload = () => {
-      const base64str = reader.result as string
-      resolve(base64str)
-    }
+//     reader.onload = () => {
+//       const base64str = reader.result as string
+//       resolve(base64str)
+//     }
 
-    reader.onerror = reject
+//     reader.onerror = reject
 
-    reader.readAsDataURL(image)
-  })
-}
+//     reader.readAsDataURL(image)
+//   })
+// }
 
-const triggerUploadBase64 = (): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = 'image/*'
-    input.click()
+// const triggerUploadBase64 = (): Promise<string> => {
+//   return new Promise((resolve, reject) => {
+//     const input = document.createElement('input')
+//     input.type = 'file'
+//     input.accept = 'image/*'
+//     input.click()
 
-    input.onchange = async () => {
-      const image = input.files?.[0]
-      if (!image) return reject(new Error('No image selected'))
+//     input.onchange = async () => {
+//       const image = input.files?.[0]
+//       if (!image) return reject(new Error('No image selected'))
 
-      try {
-        const base64str = await toBase64(image)
-        resolve(base64str)
-      } catch (error) {
-        reject(error)
-      }
-    }
-  })
-}
+//       try {
+//         const base64str = await toBase64(image)
+//         resolve(base64str)
+//       } catch (error) {
+//         reject(error)
+//       }
+//     }
+//   })
+// }
 
 const toast = useToast()
 
