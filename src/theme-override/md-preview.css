@@ -192,7 +192,7 @@
   margin-top: 1.5rem;
   max-width: 100%;
   border: 4px solid;
-  border-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/imagelesshoverbg.png')
+  border-image: url('/UI/imagelesshoverbg.png')
     1;
 }
 .minecraft-theme a {
@@ -279,7 +279,7 @@
     0 4px 0 0 #3e2723;
   border-radius: 2px;
   border: 3px solid;
-  border-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/dialogue-image.png')
+  border-image: url('/UI/dialogue-image.png')
     2;
   margin: 22px 0;
   padding: 1rem 1rem 1rem 3.5rem;
@@ -406,12 +406,12 @@
   color: transparent;
   width: 30px;
   height: 16px;
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_off.png');
+  background-image: url('/UI/toggle_off.png');
   background-size: cover;
   position: relative;
 }
 .minecraft-theme input[type='checkbox']:checked {
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_on.png');
+  background-image: url('/UI/toggle_on.png');
 }
 @media (max-width: 720px) {
   .minecraft-theme h1 {

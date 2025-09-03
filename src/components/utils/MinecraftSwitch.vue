@@ -6,7 +6,7 @@ const emits = defineEmits(['on', 'off'])
 
 const soundOn = () => {
   const audio = new Audio(
-    'https://unpkg.com/minecraft-framework-css@1.1.5/css/assets/random.click.ogg',
+    '/button.click.ogg',
   )
   audio.play()
   audio.volume = 0.3
@@ -32,7 +32,7 @@ const flick = () => {
   color: transparent;
   width: 60px;
   height: 32px;
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_off.png');
+  background-image: url('/UI/toggle_off.png');
 }
 
 .minecraft-switch:hover {
@@ -40,15 +40,15 @@ const flick = () => {
   color: transparent;
   width: 60px;
   height: 32px;
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_off_hover.png');
+  background-image: url('/UI/toggle_off_hover.png');
 }
 
 .minecraft-switch:checked {
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_on.png');
+  background-image: url('/UI/toggle_on.png');
 }
 
 .minecraft-switch:checked:hover {
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_on_hover.png');
+  background-image: url('/UI/toggle_on_hover.png');
 }
 
 .minecraft-switch[new=''] {
@@ -56,10 +56,10 @@ const flick = () => {
   color: transparent;
   width: 60px;
   height: 32px;
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_off_new.png');
+  background-image: url('/UI/toggle_off_new.png');
 }
 
 .minecraft-switch[new='']:checked {
-  background-image: url('https://unpkg.com/minecraft-framework-css@1.1.8/css/assets/toggle_on_new.png');
+  background-image: url('/UI/toggle_on_new.png');
 }
 </style>

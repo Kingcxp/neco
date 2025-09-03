@@ -57,7 +57,6 @@ Auth uses JWT Token.
     "user": {
         "username": "string",
         "group": "string[]",
-        "department": "string[]",
         "tags": [{
             "text": "string",
             "color": "string",
@@ -128,7 +127,6 @@ Current user or Admin
     "user": {
         "username": "string",
         "group": "string[]",
-        "department": "string[]",
         "tags": [{
             "text": "string",
             "color": "string",
@@ -156,7 +154,6 @@ Only Admin can see all users.
         {
             "username": "string",
             "group": "string[]",
-            "department": "string[]",
             "tags": [{
                 "text": "string",
                 "color": "string",
@@ -240,7 +237,7 @@ User can update their own avatar.
 
 - auth
 
-Admin can change group and department of others.
+Admin can change group and tag of others.
 
 - request
 
@@ -250,7 +247,11 @@ Admin can change group and department of others.
 {
     "username": "string",
     "group": "string[]",
-    "department": "string[]",
+    "tags": [{
+        "text": "string",
+        "color": "string",
+        "tagColor": "string",
+    }, ...]
 }
 ```
 
@@ -384,7 +385,7 @@ Remove session.
 
 ```json
 {
-    "total": "number"
+    "total": "int"
 }
 ```
 
@@ -397,8 +398,8 @@ Remove session.
 ```json
 {
     "target": "information" | "magazine" | "notice",
-    "page": "number",
-    "pageSize": 20, // 只是提醒你是 20，请求时不附带该字段！
+    "page": "int",
+    "pageSize": "int",
 }
 ```
 
@@ -409,6 +410,7 @@ Remove session.
     "list": [
         {
             "id": "string",
+            "pin": "boolean",
             "title": "string",
             "brief": "string",
             "date": "string",
@@ -423,23 +425,18 @@ Remove session.
 
 - request
 
-`POST /news/detail`
-
-```json
-{
-    "id": "string"
-}
-```
+`GET /news/detail/:id`
 
 - response
 
 ```json
 {
     "entity": {
-        "id": "string",
+        "pin": "boolean",
         "title": "string",
         "brief": "string",
         "date": "string",
+        "endDate": "string", // Optional
         "image": "string",
     },
     "content": [
@@ -449,19 +446,93 @@ Remove session.
         },
         ...
     ],
-    "author": {
-        "avatar": "string",
-        "name": "string",
-        "tags": [
-            {
-                "text": "string",
-                "color": "string",
-                "tagColor": "string",
-            },
-            ...
-        ],
+    "author": "string:username",
+    "category": "information" | "magazine" | "notice" | "activity",
+}
+```
+
+#### Update News
+
+- request
+
+`PATCH /news/:id`
+
+```json
+{
+    "entity": {
+        "pin": "boolean",
+        "title": "string",
+        "brief": "string",
+        "date": "string",
+        "endDate": "string", // Optional
+        "image": "string",
     },
-    "category": "资讯" | "杂志" | "公告" | "活动",
+    "content": [
+        {
+            "type": "markdown" | "pdf_file",
+            "content": "string", // markdown content or file url
+        },
+        ...
+    ],
+    "category": "information" | "magazine" | "notice" | "activity",
+}
+```
+
+- response
+
+```json
+{
+  "error": "string" // if error
+}
+```
+
+#### Create News
+
+- request
+
+`POST /news/create`
+
+```json
+{
+    "category": "information" | "magazine" | "notice" | "activity",
+    "entity": {
+        "title": "string",
+        "pin": "boolean",
+        "brief": "string",
+        "date": "string",
+        "endDate": "string", // Optional
+        "image": "string",
+    },
+    "content": [
+        {
+            "type": "markdown" | "pdf_file",
+            "content": "string", // markdown content or file url
+        },
+        ...
+    ],
+}
+```
+
+- response
+
+```json
+{
+    "id": "string",
+    "error": "string" // if error
+}
+```
+
+#### Delete News
+
+- request
+
+`DELETE /news/:id`
+
+- response
+
+```json
+{
+    "error": "string" // if error
 }
 ```
 

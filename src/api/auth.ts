@@ -11,7 +11,7 @@ export interface UserTag {
 
 export interface UserEntity {
   username: string
-  avatar: string
+  avatar?: string
   group: Array<string>
   tags: Array<UserTag>
 }
@@ -55,6 +55,9 @@ export const Login = async (username: string, password: string): Promise<LoginEn
       password: password,
     })
     .then((response) => {
+      if (response.data.error) {
+        return
+      }
       localStorage.setItem('token', response.data.token)
       localStorage.setItem('username', response.data.user?.username)
       localStorage.setItem('userGroup', JSON.stringify(response.data.user?.group || []))

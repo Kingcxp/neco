@@ -17,7 +17,7 @@ const scrollToIndex = (index: number) => {
 
 const soundOn = () => {
   const audio = new Audio(
-    'https://unpkg.com/minecraft-framework-css@1.1.5/css/assets/random.click.ogg',
+    '/button.click.ogg',
   )
   audio.play()
   audio.volume = 0.3
@@ -59,7 +59,7 @@ onMounted(async () => {
           <div class="news-detail-author-info">
             <div class="news-detail-author-info-item">
               <div class="news-detail-author-title">作者</div>
-              <div class="news-detail-author-text">{{ newsDetail?.author.name }}</div>
+              <div class="news-detail-author-text">{{ newsDetail?.author.username }}</div>
               <div
                 class="news-detail-author-name-container"
                 v-if="(newsDetail?.author.tags.length || 0) > 0"

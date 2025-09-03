@@ -1,22 +1,13 @@
+import type { UserEntity } from "./auth"
+
 export interface NewsEntity {
-  id: string
+  id?: string
+  pin: boolean,
   title: string
   brief: string
   date: string
   endDate?: string
   image: string
-}
-
-export interface AuthorTag {
-  text: string
-  color: string
-  tagColor: string
-}
-
-export interface AuthorInfo {
-  avatar: string
-  name: string
-  tags: AuthorTag[]
 }
 
 export type NewsSegmentType = 'markdown' | 'pdf_file'
@@ -29,7 +20,7 @@ export interface NewsSegment {
 export interface NewsDetail {
   entity: NewsEntity
   content: NewsSegment[]
-  author: AuthorInfo
+  author: UserEntity
   category: string
 }
 
@@ -48,6 +39,7 @@ export const GetNews = async (_target: NewsTarget, _page: number) => {
     resolve([
       {
         id: '1',
+        pin: false,
         title: '标题1',
         brief: '简介1',
         date: '2022-01-01',
@@ -56,6 +48,7 @@ export const GetNews = async (_target: NewsTarget, _page: number) => {
       },
       {
         id: '2',
+        pin: false,
         title: '标题2',
         brief: '简介2',
         date: '2022-01-02',
@@ -64,6 +57,7 @@ export const GetNews = async (_target: NewsTarget, _page: number) => {
       },
       {
         id: '3',
+        pin: false,
         title: '标题3',
         brief: '简介3',
         date: '2022-01-01',
@@ -73,6 +67,7 @@ export const GetNews = async (_target: NewsTarget, _page: number) => {
       },
       {
         id: '4',
+        pin: false,
         title: '标题4',
         brief: '简介4',
         date: '2022-01-02',
@@ -90,6 +85,7 @@ export const GetNewsDetail = async (_id: string) => {
     resolve({
       entity: {
         id: '1',
+        pin: true,
         title: '标题1',
         brief: '简介1',
         date: '2022-01-01',
@@ -277,7 +273,8 @@ int main(int argc, char *argv[]) {\n\
       ],
       author: {
         avatar: 'https://cdn.luogu.com.cn/upload/usericon/75304.png',
-        name: 'Kingcq',
+        username: 'Kingcq',
+        group: ['admin'],
         tags: [
           {
             text: '管理员',
@@ -291,43 +288,44 @@ int main(int argc, char *argv[]) {\n\
   })
 }
 
-export interface NewsBrief {
-  id: string
-  image: string
-  title: string
-  brief: string
-}
-
 export const GetNewsBrief = async () => {
-  return new Promise<NewsBrief[]>((resolve) => {
+  return new Promise<NewsEntity[]>((resolve) => {
     resolve([
       {
         id: '1',
+        pin: false,
         image:
           'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/MCV_FA25_July22_01_Editorial_Exclusive_1920x1080.jpg',
         title: '第 8 届 NFCC 小游戏大赛开赛在即！',
         brief: '【康康你的】第15期活动暨第8届NFCC小游戏派对即将开赛！欢迎大家积极参赛！',
+        date: '',
       },
       {
         id: '2',
+        pin: false,
         image:
           'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/game-characters/hoglin_bento.jpg',
         title: 'NMO动画组创作挑战',
         brief: 'NMO动画组第九届创作挑战——‘战斗,爽!’',
+        date: '',
       },
       {
         id: '3',
+        pin: false,
         image:
           'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Homepage_Hero-A-1440_Image-ID_Smurfs_DLC_1920x1080_01.jpg',
         title: '📜【NMO社刊第十三期·盛夏启航】',
         brief: '🌞热浪翻涌，方块跃动！NMO社刊携夏日狂欢特辑清凉降临！',
+        date: '',
       },
       {
         id: '4',
+        pin: false,
         image:
           'https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/screenshots/endcity-bento.jpg',
         title: '7 月服务器维护时间公告',
         brief: '由于校园网维护，服务器下线',
+        date: '',
       },
     ])
   })
