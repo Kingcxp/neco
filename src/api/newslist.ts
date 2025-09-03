@@ -10,7 +10,7 @@ export interface NewsEntity {
   image: string
 }
 
-export type NewsSegmentType = 'markdown' | 'pdf_file'
+export type NewsSegmentType = 'markdown' | 'pdf_file' | 'image'
 
 export interface NewsSegment {
   type: NewsSegmentType

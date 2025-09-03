@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { GetNewsBrief, type NewsBrief } from '@/api/newslist'
+import { GetNewsBrief, type NewsEntity } from '@/api/newslist'
 import NewsCard from './NewsCard.vue'
 import NewsList from './NewsList.vue'
 
@@ -9,7 +9,7 @@ const router = useRouter()
 
 const newsId = ref('information')
 
-const newsBrief = ref<NewsBrief[]>([])
+const newsBrief = ref<NewsEntity[]>([])
 
 const scrollToNews = () => {
   const newsList = document.getElementById('news-list')

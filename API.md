@@ -441,7 +441,7 @@ Remove session.
     },
     "content": [
         {
-            "type": "markdown" | "pdf_file",
+            "type": "markdown" | "pdf_file" | "image",
             "content": "string", // markdown content or file url
         },
         ...

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useRouter } from 'vue-router'
-import type { NewsBrief } from '@/api/newslist'
 import MinecraftButton from '@/components/utils/MinecraftButton.vue'
+import type { NewsEntity } from '@/api/newslist'
 
 const router = useRouter()
 
@@ -19,7 +19,7 @@ const newTab = (url: string) => {
 
 const props = defineProps({
   newsBrief: {
-    type: Object as () => NewsBrief,
+    type: Object as () => NewsEntity,
     required: true,
   },
   buttonText: {
