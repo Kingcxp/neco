@@ -1,14 +1,8 @@
 <script lang="ts" setup>
-import { useRouter } from 'vue-router'
 import type { NewsEntity } from '@/api/newslist'
 import MinecraftButton from '@/components/utils/MinecraftButton.vue'
 
-const router = useRouter()
-
-const newTab = (url: string) => {
-  const target = router.resolve(url)
-  window.open(target.href, '_blank')
-}
+const emits = defineEmits(['card-click'])
 
 const props = defineProps({
   news: {
@@ -19,7 +13,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <MinecraftButton class="news-item-card" @click="newTab(`/news/detail/${props.news.id}`)">
+  <MinecraftButton class="news-item-card" @click="emits('card-click')">
     <picture class="news-item-picture">
       <img class="news-item-image" :src="props.news.image" alt="news image" />
     </picture>

@@ -24,6 +24,11 @@ const scrollToNews = () => {
   }
 }
 
+const newTab = (id: string) => {
+  const target = router.resolve(`/news/detail/${id}`)
+  window.open(target.href, '_blank')
+}
+
 onMounted(async () => {
   newsBrief.value = await GetNewsBrief()
 })
@@ -70,8 +75,9 @@ onMounted(async () => {
     <NewsList
       v-model="newsId"
       id="news-list"
-      style="animation: fade-in-down 0.5s ease-in-out 1s forwards"
+      style="opacity: 0; animation: fade-in-down 0.5s ease-in-out 1s forwards"
       @need-scroll="scrollToNews"
+      @card-click="newTab"
     />
   </div>
 </template>

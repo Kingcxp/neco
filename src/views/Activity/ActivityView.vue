@@ -8,8 +8,9 @@ import MinecraftInput from '@/components/utils/MinecraftInput.vue'
 const activityTotal = ref<number>(0)
 const activities = ref<NewsEntity[]>([])
 const page = ref<number>(1)
+const pageSize = ref<number>(20)
 const maxPage = computed(() => {
-  return Math.ceil(activityTotal.value / 12)
+  return Math.ceil(activityTotal.value / pageSize.value)
 })
 const pageInput = ref('1')
 const activityLoading = ref(false)
@@ -31,7 +32,7 @@ const refreshNews = () => {
   activityLoading.value = true
   scrollToTitle()
   setTimeout(async () => {
-    activities.value = await GetNews('activity', page.value)
+    activities.value = await GetNews('activity', page.value, pageSize.value)
     activityLoading.value = false
   }, 1000)
 }
@@ -63,7 +64,7 @@ const setPage = () => {
 onMounted(async () => {
   activityTotal.value = await GetNewsTotal('activity')
   activityLoading.value = true
-  activities.value = await GetNews('activity', page.value)
+  activities.value = await GetNews('activity', page.value, pageSize.value)
   activityLoading.value = false
 })
 </script>

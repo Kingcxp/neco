@@ -6,7 +6,7 @@ import NewsItem from './NewsItem.vue'
 import MinecraftButton from '@/components/utils/MinecraftButton.vue'
 import MinecraftInput from '@/components/utils/MinecraftInput.vue'
 
-const emit = defineEmits(['need-scroll'])
+const emit = defineEmits(['need-scroll', 'card-click'])
 
 const model = defineModel({
   type: Object as () => NewsTarget,
@@ -16,8 +16,9 @@ const model = defineModel({
 const newsTotal = ref<number>(0)
 const news = ref<NewsEntity[]>([])
 const page = ref<number>(1)
+const pageSize = ref<number>(20)
 const maxPage = computed(() => {
-  return Math.ceil(newsTotal.value / 20)
+  return Math.ceil(newsTotal.value / pageSize.value)
 })
 const pageInput = ref('1')
 const newsLoading = ref(false)
@@ -26,9 +27,9 @@ const refreshNews = () => {
   newsLoading.value = true
   emit('need-scroll')
   setTimeout(async () => {
-    news.value = await GetNews(model.value as NewsTarget, page.value)
+    news.value = await GetNews(model.value as NewsTarget, page.value, pageSize.value)
     newsLoading.value = false
-  }, 1000)
+  }, 500)
 }
 
 const movePage = (dir: 'prev' | 'next') => {
@@ -69,7 +70,7 @@ watch(
 onMounted(async () => {
   newsTotal.value = await GetNewsTotal(model.value as NewsTarget)
   newsLoading.value = true
-  news.value = await GetNews(model.value as NewsTarget, page.value)
+  news.value = await GetNews(model.value as NewsTarget, page.value, pageSize.value)
   newsLoading.value = false
 })
 
@@ -132,6 +133,7 @@ const optionFocus = ref(false)
         :style="{
           '--delay': news.indexOf(item) * 0.1 + 's',
         }"
+        @card-click="emit('card-click', item.id)"
       />
     </div>
     <div class="news-pagination" v-if="!newsLoading">
@@ -160,7 +162,6 @@ const optionFocus = ref(false)
 
 <style lang="css" scoped>
 .news-list-panel {
-  opacity: 0;
   width: calc(100% - 4rem);
   margin: 2rem;
   background:
@@ -181,6 +182,7 @@ const optionFocus = ref(false)
 }
 
 .news-title {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,8 +270,8 @@ const optionFocus = ref(false)
   outline: 1px solid var(--minecraft-green-light);
 
   position: absolute;
-  left: 1.5rem;
-  top: calc(5rem + 1px);
+  left: 0;
+  top: 3.5rem;
   z-index: 1000;
 }
 

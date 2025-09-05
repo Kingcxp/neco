@@ -373,13 +373,9 @@ Remove session.
 
 - request
 
-`POST /news/total`
+`GET /news/total/:target`
 
-```json
-{
-    "target": "information" | "magazine" | "notice" | "activity",
-}
-```
+target: "information" | "magazine" | "notice" | "activity",
 
 - response
 
@@ -397,9 +393,10 @@ Remove session.
 
 ```json
 {
-    "target": "information" | "magazine" | "notice",
+    "target": "information" | "magazine" | "notice" | "activity",
     "page": "int",
-    "pageSize": "int",
+    "page_size": "int",
+    "pin": "boolean", // whether to show pinned news
 }
 ```
 
@@ -469,7 +466,7 @@ Remove session.
     },
     "content": [
         {
-            "type": "markdown" | "pdf_file",
+            "type": "markdown" | "pdf_file" | "image",
             "content": "string", // markdown content or file url
         },
         ...
@@ -486,32 +483,49 @@ Remove session.
 }
 ```
 
+#### Upload file resource
+
+- request
+
+`POST /news/upload/:id`
+
+with multipart/form-data file upload
+
+- response
+
+```json
+{
+    "url": "string" // will be combined with backend url base, should be undefined if error
+}
+```
+
+#### Remove file resouece
+
+- request
+
+`DELETE /news/upload/:id`
+
+```json
+{
+    "url": "string" // backend url base should be removed
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
+
 #### Create News
 
 - request
 
 `POST /news/create`
 
-```json
-{
-    "category": "information" | "magazine" | "notice" | "activity",
-    "entity": {
-        "title": "string",
-        "pin": "boolean",
-        "brief": "string",
-        "date": "string",
-        "endDate": "string", // Optional
-        "image": "string",
-    },
-    "content": [
-        {
-            "type": "markdown" | "pdf_file",
-            "content": "string", // markdown content or file url
-        },
-        ...
-    ],
-}
-```
+创建一个空的新闻，返回其ID，编辑通过update来实现
 
 - response
 

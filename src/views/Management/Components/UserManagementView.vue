@@ -57,7 +57,7 @@ const toast = useToast()
 
 const avatar = ref('/nmo-logo-large.png')
 const username = ref(localStorage.getItem('username') || 'Kingcq')
-const userGroup = ref(JSON.parse(localStorage.getItem('userGroup') || '["admin"]'))
+const userGroup = ref(JSON.parse(localStorage.getItem('userGroup') || '[]'))
 const userTags = ref(
   JSON.parse(
     localStorage.getItem('userTags') ||
@@ -318,52 +318,7 @@ const onConfirmDeleteUser = async () => {
 
 onMounted(async () => {
   if (userGroup.value.includes('admin')) {
-    users.value = (await GetUserList()) || [
-      {
-        username: 'Kingcq',
-        group: ['admin'],
-        tags: [
-          {
-            text: '管理员',
-            color: '#E6A23C',
-            tagColor: 'rgba(230, 162, 60, 0.1)',
-          },
-        ],
-      } as UserEntity,
-      {
-        username: 'StrideBeach',
-        group: ['news_admin'],
-        tags: [
-          {
-            text: '碎碎',
-            color: '#409EFF',
-            tagColor: 'rgba(33, 61, 91, 0.8)',
-          },
-        ],
-      } as UserEntity,
-      {
-        username: 'AintCecily',
-        group: ['news_admin'],
-        tags: [
-          {
-            text: '壳壳',
-            color: '#F56C6C',
-            tagColor: 'rgba(88, 46, 46, 0.8)',
-          },
-        ],
-      } as UserEntity,
-      {
-        username: 'AircraftCarrierX',
-        group: ['news_admin'],
-        tags: [
-          {
-            text: '吉祥物',
-            color: '#FF00FF',
-            tagColor: 'rgba(186, 85, 211, 0.2)',
-          },
-        ],
-      } as UserEntity,
-    ] // TODO: To be removed
+    users.value = (await GetUserList()) || []
     for (let i = 0; i < users.value.length; i++) {
       avatars.value.push((await GetAvatar(users.value[i].username)) || '/nmo-logo-large.png')
     }
