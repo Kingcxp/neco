@@ -55,7 +55,7 @@ onMounted(async () => {
         >服务器信息</MinecraftButtonClassic
       >
       <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/news')"
-        >新闻管理</MinecraftButtonClassic
+        >文章管理</MinecraftButtonClassic
       >
 
       <div style="display: flex; flex-direction: column; margin-top: auto">

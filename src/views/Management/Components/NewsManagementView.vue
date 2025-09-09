@@ -3,6 +3,7 @@ import {
   CreateNews,
   DeleteFile,
   GetNewsDetail,
+  UpdateNews,
   UploadFile,
   type NewsSegment,
   type NewsTarget,
@@ -27,6 +28,8 @@ import MinecraftButton from '@/components/utils/MinecraftButton.vue'
 import UploadPdf from '@/components/icons/UploadPdf.vue'
 import MinecraftDialog from '@/components/utils/MinecraftDialog.vue'
 import LoadNews from '@/components/icons/LoadNews.vue'
+import MinecraftSwitch from '@/components/utils/MinecraftSwitch.vue'
+import PlusIcon from '@/components/icons/PlusIcon.vue'
 
 const editorToolbars = ref<ToolbarNames[]>([
   'bold',
@@ -193,7 +196,7 @@ const onNewsClick = async (id: string) => {
       newsBrief.value = result.entity.brief
       newsContent.value = result.content
       newsPin.value = result.entity.pin
-      newsType.value = result.category
+      newsType.value = result.category as NewsTarget
       newsDate.value = result.entity.date
       newsEndDate.value = result.entity.endDate
 
@@ -214,23 +217,54 @@ const newsContent = ref<NewsSegment[]>([])
 const newsText = ref('')
 const newsPdfFiles = ref(new Map())
 const newsPin = ref(false)
-const newsType = ref('information')
+const newsImage = ref('')
+const newsType = ref<NewsTarget>('information')
 const newsDate = ref(formatDate(new Date()))
 const newsEndDate = ref<string | undefined>(nextYear(new Date()))
 
 const preview = ref(false)
 
+const coverUploadVisible = ref(false)
+
+const onCoverUpload = async () => {
+  newsImage.value = ''
+  coverUploadVisible.value = true
+}
+
+const onSelectImage = async () => {
+  coverUploadVisible.value = false
+  toast.info('上传中，请等待成功提示…')
+
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.click()
+
+  input.onchange = async () => {
+    const file = input.files?.[0]
+    if (file) {
+      const result = await UploadFile(newsId.value, file)
+      if (result) {
+        toast.success('上传封面成功！')
+      } else {
+        toast.error(`上传封面失败：${result}！`)
+      }
+    }
+  }
+}
+
 const onAddNews = async () => {
   status.value = 'add'
   newsId.value = (await CreateNews()) || ''
   if (newsId.value.trim() === '') {
-    toast.error('创建新闻失败！')
+    toast.error('创建文章失败！')
     status.value = 'none'
     return
   }
   newsTitle.value = ''
   newsBrief.value = ''
   newsContent.value = []
+  newsImage.value = ''
   newsText.value = ''
   newsPdfFiles.value.clear()
   newsPin.value = false
@@ -321,11 +355,57 @@ const loadNews = () => {
     }
   }
 }
+
+const commitNews = async () => {
+  if (newsTitle.value.trim() === '') {
+    toast.warning('请输入标题！')
+    return
+  }
+  if (newsBrief.value.trim() === '') {
+    toast.warning('请输入简介！')
+    return
+  }
+  if (newsImage.value.trim() === '') {
+    toast.warning('请上传封面！')
+    return
+  }
+  if (newsText.value.length === 0) {
+    toast.warning('请输入正文内容！')
+    return
+  }
+  if (newsDate.value.trim() === '') {
+    toast.warning('请输入开始时间！')
+    return
+  }
+  if (newsType.value.trim() === '') {
+    toast.warning('请选择类型！')
+    return
+  }
+  toContent()
+  const result = await UpdateNews(
+    newsId.value,
+    newsType.value,
+    {
+      title: newsTitle.value,
+      pin: newsPin.value,
+      brief: newsBrief.value,
+      date: newsDate.value,
+      endDate: newsEndDate.value,
+      image: '',
+    },
+    newsContent.value,
+  )
+  if (result) {
+    toast.error('上传文章失败！')
+  } else {
+    toast.success('上传文章成功！')
+  }
+}
 </script>
 
 <template>
   <div class="management-tab-title-container">
-    <text class="management-tab-title">新闻管理</text>
+    <text class="management-tab-title">文章管理</text>
     <text class="management-tab-subtitle">为什么我 这么弱？</text>
   </div>
   <NewsList
@@ -369,7 +449,29 @@ const loadNews = () => {
           @click="newsType = 'magazine'"
           >社刊</MinecraftButtonClassic
         >
+        <MinecraftButtonClassic
+          class="news-button"
+          :activated="newsType === 'document'"
+          @click="newsType = 'document'"
+          >文档</MinecraftButtonClassic
+        >
       </div>
+    </div>
+    <div class="news-input-item">
+      <text class="news-input-label">置顶</text>
+      <text style="user-select: none; font-size: 0.8rem; color: #ccc"
+        >最新的置顶文章会在首页顶部展示！</text
+      >
+      <MinecraftSwitch v-model="newsPin" />
+    </div>
+    <div class="news-input-item">
+      <text class="news-input-label">文章封面</text>
+      <div class="upload-button" v-if="newsImage.trim() === ''" @click="onCoverUpload">
+        <PlusIcon />
+      </div>
+      <picture class="news-image-picture" v-else>
+        <img class="news-image" @click="onCoverUpload" :src="newsImage" alt="news-image" />
+      </picture>
     </div>
     <div class="news-input-item">
       <text class="news-input-label">ID</text>
@@ -377,15 +479,16 @@ const loadNews = () => {
     </div>
     <div class="news-input-item">
       <text class="news-input-label">标题</text>
-      <MinecraftInput class="news-input" placeholder="请输入标题" />
+      <MinecraftInput class="news-input" v-model="newsTitle" placeholder="请输入标题" />
     </div>
     <div class="news-input-item">
       <text class="news-input-label">简介</text>
       <MinecraftTextarea
+        v-model="newsBrief"
         class="news-input"
         style="resize: vertical"
         wrap="soft"
-        placeholder="请输入简介"
+        placeholder="简介不宜过长！"
       />
     </div>
     <div class="news-input-item">
@@ -464,6 +567,7 @@ const loadNews = () => {
         </div>
       </div>
     </div>
+    <MinecraftButtonClassic @click="commitNews">保存</MinecraftButtonClassic>
   </form>
   <MinecraftDialog title="添加 PDF 文件" v-model="showPdfDialog">
     <div class="pdf-options-container">
@@ -478,6 +582,26 @@ const loadNews = () => {
     <div class="pdf-options-container">
       <text class="pdf-options-label">直接上传</text>
       <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectPdf"
+        >↑点击上传</MinecraftButtonClassic
+      >
+    </div>
+    <template v-slot:footer>
+      <span></span>
+    </template>
+  </MinecraftDialog>
+  <MinecraftDialog title="上传封面" v-model="coverUploadVisible">
+    <div class="pdf-options-container">
+      <text class="pdf-options-label">图片地址</text>
+      <div class="pdf-options-input-container">
+        <MinecraftInput class="pdf-options-input" v-model="newsImage" placeholder="填入图片链接" />
+        <MinecraftButtonClassic class="pdf-options-button" @click="coverUploadVisible = false"
+          >保存</MinecraftButtonClassic
+        >
+      </div>
+    </div>
+    <div class="pdf-options-container">
+      <text class="pdf-options-label">直接上传</text>
+      <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectImage"
         >↑点击上传</MinecraftButtonClassic
       >
     </div>
@@ -588,6 +712,52 @@ const loadNews = () => {
 .pdf-options-button {
   width: 6rem;
   font-size: 1.2rem;
+}
+
+.upload-button {
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #fff;
+  color: white;
+  cursor: pointer;
+  padding: 1.2rem;
+  background-color: rgba(255, 255, 255, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.upload-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.news-image {
+  height: 6rem;
+  width: auto;
+  user-select: none;
+}
+
+.news-image-picture {
+  cursor: pointer;
+  height: 6rem;
+  width: min-content;
+  position: relative;
+}
+
+.news-image-picture::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(255, 255, 255, 0);
+  transition: all 0.2s ease-in-out;
+}
+
+.news-image-picture:hover::after {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 </style>
 
