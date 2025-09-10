@@ -106,7 +106,7 @@ const loadContent = (content: NewsSegment[]) => {
         break
       case 'pdf_file':
         result += formatPdf(segment.content)
-        newsPdfFiles.value.set(formatPdf(segment.content), segment.content)
+        newsPdfFiles.value.push(segment.content)
         break
       default:
         toast.error('神秘的正文类型！')
@@ -116,27 +116,43 @@ const loadContent = (content: NewsSegment[]) => {
 }
 
 const checkContent = async () => {
-  const toRemove = []
-  for (const key of newsPdfFiles.value.keys()) {
+  let toRemove = []
+  for (const key of newsPdfFiles.value) {
     if (!newsText.value.includes(key)) {
       toRemove.push(key)
-      const result = await DeleteFile(newsId.value, newsPdfFiles.value.get(key) as string)
+      const result = await DeleteFile(newsId.value, key)
       if (!result) {
-        toast.warning(`已从服务器移除文件：${newsPdfFiles.value.get(key) as string}！`)
+        toast.warning(`已从服务器移除文件：${key}！`)
       } else {
-        toast.error(`无法从服务器移除文件：${newsPdfFiles.value.get(key) as string}！`)
+        toast.error(`无法从服务器移除文件：${key}！`)
       }
     }
   }
   for (const key of toRemove) {
-    newsPdfFiles.value.delete(key)
+    newsPdfFiles.value = newsPdfFiles.value.filter((item) => item !== key)
+  }
+
+  toRemove = []
+  for (const key of newsImgFiles.value) {
+    if (!newsText.value.includes(key)) {
+      toRemove.push(key)
+      const result = await DeleteFile(newsId.value, key)
+      if (!result) {
+        toast.warning(`已从服务器移除文件：${key}！`)
+      } else {
+        toast.error(`无法从服务器移除文件：${key}！`)
+      }
+    }
+  }
+  for (const key of toRemove) {
+    newsImgFiles.value = newsImgFiles.value.filter((item) => item !== key)
   }
 }
 
 const toContent = () => {
   let curText = newsText.value
   const result: NewsSegment[] = []
-  for (const key of newsPdfFiles.value.keys()) {
+  for (const key of newsPdfFiles.value) {
     while (newsText.value.includes(key)) {
       const textSegment = curText.split(key)[0]
       curText = curText.split(key).slice(1).join(key)
@@ -146,7 +162,7 @@ const toContent = () => {
       })
       result.push({
         type: 'pdf_file',
-        content: newsPdfFiles.value.get(key) as string,
+        content: key,
       })
     }
   }
@@ -215,7 +231,8 @@ const newsTitle = ref('')
 const newsBrief = ref('')
 const newsContent = ref<NewsSegment[]>([])
 const newsText = ref('')
-const newsPdfFiles = ref(new Map())
+const newsPdfFiles = ref<Array<string>>([])
+const newsImgFiles = ref<Array<string>>([])
 const newsPin = ref(false)
 const newsImage = ref('')
 const newsType = ref<NewsTarget>('information')
@@ -272,7 +289,8 @@ const onAddNews = async () => {
   newsContent.value = []
   newsImage.value = ''
   newsText.value = ''
-  newsPdfFiles.value.clear()
+  newsPdfFiles.value = []
+  newsImgFiles.value = []
   newsPin.value = false
   newsType.value = 'information'
   newsDate.value = formatDate(new Date())
@@ -304,7 +322,7 @@ const onSelectPdf = () => {
       const result = await UploadFile(newsId.value, file)
       if (result) {
         toast.success('上传 PDF 成功！')
-        newsPdfFiles.value.set(formatPdf(result), result)
+        newsPdfFiles.value.push(result)
         editorRef.value?.insert(() => {
           return {
             targetValue: formatPdf(result),
@@ -322,7 +340,7 @@ const addPdfFileConfirm = () => {
     toast.warning('请输入 PDF 链接！')
     return
   }
-  newsPdfFiles.value.set(formatPdf(pdfSrc.value), pdfSrc.value)
+  newsPdfFiles.value.push(pdfSrc.value)
   editorRef.value?.insert(() => {
     return {
       targetValue: formatPdf(pdfSrc.value),
@@ -397,7 +415,7 @@ const commitNews = async () => {
       brief: newsBrief.value,
       date: newsDate.value,
       endDate: newsEndDate.value,
-      image: '',
+      image: newsImage.value,
     },
     newsContent.value,
   )
@@ -409,6 +427,23 @@ const commitNews = async () => {
       localStorage.removeItem('newsId')
     }
   }
+}
+
+const onUploadImg = async (files: Array<File>, callback: (urls: string[] | { url: string; alt: string; title: string }[]) => void) => {
+  const res = await Promise.all(
+    files.map(async (file) => {
+      const result = await UploadFile(newsId.value, file)
+      if (result) {
+        newsImgFiles.value.push(result)
+        toast.success(`上传图片成功！`)
+        return result
+      } else {
+        toast.error(`上传图片失败！`)
+        return ''
+      }
+    }),
+  )
+  callback(res)
 }
 </script>
 
@@ -547,6 +582,7 @@ const commitNews = async () => {
           @on-remount="mountSounds"
           @on-save="saveNews"
           :preview="false"
+          @on-upload-img="onUploadImg"
         >
           <template #defToolbars>
             <NormalToolbar title="添加 PDF 文件" @on-click="addPdfFile">
@@ -600,7 +636,7 @@ const commitNews = async () => {
     <div class="pdf-options-container">
       <text class="pdf-options-label">直接上传</text>
       <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectPdf"
-        >↑点击上传</MinecraftButtonClassic
+        >↑ 点击上传</MinecraftButtonClassic
       >
     </div>
     <template v-slot:footer>
@@ -620,7 +656,7 @@ const commitNews = async () => {
     <div class="pdf-options-container">
       <text class="pdf-options-label">直接上传</text>
       <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectImage"
-        >↑点击上传</MinecraftButtonClassic
+        >↑ 点击上传</MinecraftButtonClassic
       >
     </div>
     <template v-slot:footer>
