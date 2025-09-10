@@ -36,7 +36,7 @@ const nextBg = (first: boolean = false) => {
   }
   if (pool.length === 0) {
     for (let i = 1; i <= bgCount; i++) {
-      pool.push(`/mc自然风景背景图-air/${i}.png`)
+      pool.push(import.meta.env.BASE_URL + `mc自然风景背景图-air/${i}.png`)
     }
   }
 
