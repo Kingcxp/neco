@@ -56,7 +56,7 @@ const triggerUploadBase64 = (): Promise<string> => {
 const toast = useToast()
 
 const avatar = ref('/nmo-logo-large.png')
-const username = ref(localStorage.getItem('username') || 'Kingcq')
+const username = ref(localStorage.getItem('username') || 'Undefined')
 const userGroup = ref(JSON.parse(localStorage.getItem('userGroup') || '[]'))
 const userTags = ref(
   JSON.parse(
@@ -72,7 +72,7 @@ const userTags = ref(
 )
 
 const editAvatar = ref('/nmo-logo-large.png')
-const editUsername = ref('Kingcq')
+const editUsername = ref('Undefined')
 const editAdminSwitch = ref(true)
 const editNewsAdminSwitch = ref(false)
 const editUserTags = ref([
@@ -137,7 +137,7 @@ const editDeleteTag = (index: number) => {
 }
 
 const updateLocalStorage = () => {
-  username.value = localStorage.getItem('username') || 'Kingcq'
+  username.value = localStorage.getItem('username') || 'Undefined'
   userGroup.value = JSON.parse(localStorage.getItem('userGroup') || '["admin"]')
   userTags.value = JSON.parse(
     localStorage.getItem('userTags') ||
