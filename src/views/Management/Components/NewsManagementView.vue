@@ -192,10 +192,6 @@ const scrollTo = (id: string) => {
 }
 
 const scrollToNews = () => {
-  if (userGroup.value.includes('admin') || userGroup.value.includes('news_admin')) {
-    scrollTo('edit-news')
-    return
-  }
   scrollTo('news-list-manage')
 }
 
@@ -205,11 +201,13 @@ const onNewsClick = async (id: string) => {
   if (userGroup.value.includes('admin') || userGroup.value.includes('news_admin')) {
     // Edit
     status.value = 'edit'
+    scrollTo('edit-news')
     newsId.value = id
     const result = await GetNewsDetail(id)
     if (result) {
       newsTitle.value = result.entity.title
       newsBrief.value = result.entity.brief
+      newsImage.value = result.entity.image
       newsContent.value = result.content
       newsPin.value = result.entity.pin
       newsType.value = result.category as NewsTarget
@@ -457,6 +455,7 @@ const onUploadImg = async (files: Array<File>, callback: (urls: string[] | { url
     }}</text>
   </div>
   <NewsList
+    style="margin: 0; width: 100%;"
     v-model="viewType"
     id="news-list-manage"
     @need-scroll="scrollToNews"

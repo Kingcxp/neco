@@ -13,7 +13,7 @@ export interface UserEntity {
   username: string
   avatar?: string
   group: Array<string> | null
-  tags: Array<UserTag>
+  tags: Array<UserTag> | null
 }
 
 export type UserStatus = 'alive' | 'dead' | 'unknown'

@@ -19,6 +19,9 @@ import { useToast } from 'vue-toastification'
 
 const toBase64 = async (image: File): Promise<string> => {
   return new Promise((resolve, reject) => {
+    if (image.size > 5 * 1024 * 1024) {
+      return reject(new Error('File size exceeds 1MB'))
+    }
     const reader = new FileReader()
 
     reader.onload = () => {

@@ -100,7 +100,7 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 2rem;
+  padding: 0 4rem;
   margin-bottom: 2rem;
 }
 
@@ -108,7 +108,7 @@ onMounted(async () => {
   flex: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .news-list-panel {

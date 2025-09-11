@@ -66,7 +66,18 @@ export const GetNewsDetail = async (id: string): Promise<NewsDetail | null> => {
   await api
     .get(`/news/detail/${id}`)
     .then((res) => {
-      result = res.data as NewsDetail
+      result = {
+        entity: res.data.entity as NewsEntity,
+        content: res.data.content as NewsSegment[],
+        author: {
+          id: res.data.author.id,
+          username: res.data.author.username,
+          group: res.data.author.group || [],
+          avatar: res.data.author.avatar,
+          tags: res.data.author.tags || [],
+        },
+        category: res.data.category,
+      } as NewsDetail
     })
     .catch(() => {})
   return result

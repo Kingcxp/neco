@@ -16,7 +16,7 @@ const model = defineModel({
 const newsTotal = ref<number>(0)
 const news = ref<NewsEntity[]>([])
 const page = ref<number>(1)
-const pageSize = ref<number>(20)
+const pageSize = ref<number>(60)
 const maxPage = computed(() => {
   return Math.ceil(newsTotal.value / pageSize.value)
 })
@@ -346,7 +346,8 @@ const optionFocus = ref(false)
 .news-list-container {
   width: 100%;
   display: grid;
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(17.5rem, 21.75rem));
+  gap: 2rem;
   padding: 1rem 0;
   justify-content: center;
 }
@@ -412,30 +413,6 @@ const optionFocus = ref(false)
   width: 3rem;
   font-size: 1rem;
   text-align: center;
-}
-
-@media screen and (max-width: 2560px) {
-  .news-list-container {
-    grid-template-columns: repeat(5, minmax(17.5rem, 21.75rem));
-  }
-}
-
-@media screen and (max-width: 1920px) {
-  .news-list-container {
-    grid-template-columns: repeat(4, minmax(17.5rem, 21.75rem));
-  }
-}
-
-@media screen and (max-width: 1312px) {
-  .news-list-container {
-    grid-template-columns: repeat(3, minmax(17.5rem, 21.75rem));
-  }
-}
-
-@media screen and (max-width: 1008px) {
-  .news-list-container {
-    grid-template-columns: repeat(2, minmax(17.5rem, 21.75rem));
-  }
 }
 
 @media screen and (max-width: 800px) {
