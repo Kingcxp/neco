@@ -110,6 +110,7 @@ const saveEditUser = async () => {
 
 const loadEditUser = async (user: UserEntity) => {
   editUsername.value = user.username
+  editAvatar.value = user.avatar || '/nmo-logo-large.png'
   editAdminSwitch.value = (user.group || []).includes('admin')
   editNewsAdminSwitch.value = (user.group || []).includes('news_admin')
   editUserTags.value = JSON.parse(JSON.stringify(user.tags || []))
