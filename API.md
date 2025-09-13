@@ -347,26 +347,113 @@ Remove session.
 
 - request
 
-`GET /server/list`
+`GET /server`
 
 - response
 
 ```json
-[
-    {
-        "name": "string",
-        "description": "string",
-        "online": "boolean",
-        "playerCount": "number",
-        "capacity": "number",
-        "icon": "string",
-        "onlineMapUrl": "string",
-        "serverUrl": "string",
-    },
-    ...
-]
+{
+    "servers":
+    [
+        {
+            
+            "name": "string",
+            "icon": "string",
+            "description": "string",
+            // If realtime is true, the following fields will be valid.
+            "realtime": "boolean", 
+            "online": "boolean",
+            "playerCount": "number",
+            "capacity": "number",
+            "onlineMapUrl": "string",
+            "serverUrl": "string",
+        },
+        ...
+    ]
+}
 ```
 
+#### Add Server
+
+- auth
+
+Admin
+
+- request
+
+`POST /server`
+
+```json
+{
+    "name": "string",
+    "icon": "string",
+    "description": "string",
+    "realtime": "boolean",
+    "online": "boolean",
+    "playerCount": "number",
+    "capacity": "number",
+    "onlineMapUrl": "string",
+    "serverUrl": "string",
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
+
+#### Update Server
+
+- auth
+
+Admin
+
+- request
+
+`PATCH /server`
+
+```json
+{
+    "name": "string",
+    "icon": "string",
+    "description": "string",
+    "realtime": "boolean",
+    "online": "boolean",
+    "playerCount": "number",
+    "capacity": "number",
+    "onlineMapUrl": "string",
+    "serverUrl": "string",
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
+
+#### Delete Server
+
+- auth
+
+Admin
+
+- request
+
+`DELETE /server/:id`
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
 ### News
 
 #### Get News Total
