@@ -20,7 +20,7 @@
 
 ### Auth
 
-User group includes ["admin", "news_admin"]. If empty, the user doesn"t have permission to manage corresponding resources.
+User group includes ["admin", "news_admin", "server_admin"]. If empty, the user doesn"t have permission to manage corresponding resources.
 
 Auth uses JWT Token.
 
@@ -409,7 +409,7 @@ Admin
 
 - auth
 
-Admin
+Admin or server_admin
 
 - request
 
@@ -441,7 +441,7 @@ Admin
 
 - auth
 
-Admin
+Admin or server_admin
 
 - request
 
@@ -473,7 +473,7 @@ Admin
 
 - auth
 
-Admin
+Admin or server_admin
 
 - request
 
