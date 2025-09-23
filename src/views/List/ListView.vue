@@ -1,16 +1,20 @@
 <script lang="ts" setup>
-// TODO: server list
 import { onMounted, ref } from 'vue'
-import { getServerList, type ServerEntity } from '../../api/serverlist'
+import { GetServerList, type ServerEntity } from '../../api/serverlist'
 import useClipboard from 'vue-clipboard3'
 import ListItem from './ListItem.vue'
 import MinecraftButtonClassic from '@/components/utils/MinecraftButtonClassic.vue'
 import { useToast } from 'vue-toastification'
 
+const randomInt = (l: number, r: number): number => {
+  return Math.round(Math.random() * (r - l)) + l
+}
+
 const toast = useToast()
 const { toClipboard } = useClipboard()
 
 const serverList = ref<ServerEntity[]>([])
+const serverPing = ref<string[]>([])
 const focusIndex = ref(-1)
 
 const onClick = (index: number) => {
@@ -26,9 +30,49 @@ const copy = async (text: string) => {
   }
 }
 
+let direction = 1
+let pingFrame = 1
+let pingTimer: NodeJS.Timeout | undefined = undefined
+let notOnlineServerIndexs: number[] = []
+
 const refresh = async () => {
-  const res = await getServerList()
-  serverList.value.splice(0, serverList.value.length, ...res)
+  serverList.value = await GetServerList()
+  serverPing.value = []
+  notOnlineServerIndexs = []
+  if (pingTimer) {
+    clearInterval(pingTimer)
+    pingTimer = undefined
+    direction = 1
+    pingFrame = 1
+  }
+  let hasNotOnline = false
+  for (let i = 0; i < serverList.value.length; i++) {
+    if (serverList.value[i].realtime) {
+      if (!serverList.value[i].online) {
+        hasNotOnline = true
+        notOnlineServerIndexs.push(i)
+        serverPing.value.push(`/UI/server/Server_Pinging_${pingFrame}.png`)
+      } else {
+        serverPing.value.push(`/UI/server/Server_Ping_${randomInt(1, 5)}.png`)
+      }
+    } else {
+      serverPing.value.push(`/UI/server/Server_Unreachable.png`)
+    }
+  }
+  if (hasNotOnline) {
+    pingTimer = setInterval(() => {
+      for (let i = 0; i < notOnlineServerIndexs.length; i++) {
+        const index = notOnlineServerIndexs[i]
+        serverPing.value[index] = `/UI/server/Server_Pinging_${pingFrame}.png`
+      }
+      if (pingFrame > 4) {
+        direction = -1
+      } else if (pingFrame <= 1) {
+        direction = 1
+      }
+      pingFrame += direction
+    }, 150)
+  }
 }
 
 onMounted(async () => {
@@ -41,25 +85,29 @@ onMounted(async () => {
     <div class="list-item-container">
       <ListItem
         class="list-item"
-        v-for="server, index in serverList"
+        v-for="(server, index) in serverList"
         :style="{
           '--delay': serverList.indexOf(server) * 0.2 + 's',
         }"
+        :ping-icon="serverPing[index]"
         :key="server.name"
         :server="server"
         @click="onClick(index)"
+        @dblclick="focusIndex === index ? copy(server.serverUrl || 'undefined') : null"
         :type="focusIndex === index ? 'focus' : ''"
       />
     </div>
     <div class="server-options">
+      <MinecraftButtonClassic class="server-option" @click="refresh">刷新</MinecraftButtonClassic>
       <MinecraftButtonClassic
         class="server-option"
-        @click="refresh"
-      >刷新</MinecraftButtonClassic>
-      <MinecraftButtonClassic
-        class="server-option"
-        @click="focusIndex !== -1 ? copy(serverList[focusIndex].serverUrl) : toast.warning('未选择服务器！')"
-      >加入服务器</MinecraftButtonClassic>
+        @click="
+          focusIndex !== -1
+            ? copy(serverList[focusIndex].serverUrl || 'undefined')
+            : toast.warning('未选择服务器！')
+        "
+        >加入服务器</MinecraftButtonClassic
+      >
     </div>
   </div>
 </template>

@@ -3,11 +3,12 @@ import { CheckAuthorized, Logout } from '@/api/auth'
 import MinecraftButton from '@/components/utils/MinecraftButton.vue'
 import MinecraftButtonClassic from '@/components/utils/MinecraftButtonClassic.vue'
 import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 
 const toast = useToast()
 const router = useRouter()
+const route = useRoute()
 const sidebarExpand = ref(true)
 
 const onLogout = async () => {
@@ -47,16 +48,28 @@ onMounted(async () => {
     <div class="management-menu" :type="sidebarExpand ? '' : 'shrink'">
       <img class="management-logo" src="/nmo-logo-large.png" />
       <span class="management-title">NMO - 管理后台</span>
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/user')"
+      <MinecraftButtonClassic
+        class="management-nav"
+        :activated="route.path.endsWith('/management/user')"
+        @click="router.replace('/management/user')"
         >用户管理</MinecraftButtonClassic
       >
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/club')"
+      <MinecraftButtonClassic
+        class="management-nav"
+        :activated="route.path.endsWith('/management/club')"
+        @click="router.replace('/management/club')"
         >社团管理</MinecraftButtonClassic
       >
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/server')"
+      <MinecraftButtonClassic
+        class="management-nav"
+        :activated="route.path.endsWith('/management/server')"
+        @click="router.replace('/management/server')"
         >服务器信息</MinecraftButtonClassic
       >
-      <MinecraftButtonClassic class="management-nav" @click="router.replace('/management/news')"
+      <MinecraftButtonClassic
+        class="management-nav"
+        :activated="route.path.endsWith('/management/news')"
+        @click="router.replace('/management/news')"
         >文章管理</MinecraftButtonClassic
       >
 

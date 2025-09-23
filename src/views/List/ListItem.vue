@@ -20,31 +20,38 @@ const props = defineProps({
     type: Object as () => ServerEntity,
     required: true,
   },
+  pingIcon: {
+    type: String,
+    required: true,
+  },
 })
 </script>
 
 <template>
-  <div class="item-border" @dblclick="copy(props.server.serverUrl)">
+  <div class="item-border">
     <img
       :src="props.server.icon"
       alt="icon"
       width="64"
       height="64"
       style="border: 1px solid grey"
-      @click="copy(props.server.serverUrl)"
+      @click="copy(props.server.serverUrl || '')"
     />
     <div class="item-info">
-      <span style="color: white; font-size: 1.1rem;">{{ props.server.name }}</span>
+      <span style="color: white; font-size: 1.1rem">{{ props.server.name }}</span>
       <span>{{ props.server.description }}</span>
     </div>
     <div class="item-status">
-      <span v-if="props.server.playerCount != -1">{{ props.server.playerCount }}</span>
-      <span v-if="props.server.playerCount != -1">/</span>
-      <span v-if="props.server.capacity != -1">{{ props.server.capacity }}</span>
+      <span class="server-status">
+        <text class="status-text" v-if="props.server.realtime && props.server.online"
+          >{{ props.server.playerCount || 0 }}/{{ props.server.capacity || 0 }}</text
+        >
+        <img class="status-img" :src="props.pingIcon" alt="pingIcon" />
+      </span>
       <span style="margin-top: auto">
-        <a v-if="props.server.onlineMapUrl != ''" :href="props.server.onlineMapUrl">网页地图</a>
-        <span v-if="props.server.onlineMapUrl != '' && props.server.serverUrl != ''">/</span>
-        <a v-if="props.server.serverUrl != ''" :href="props.server.serverUrl">服务器地址</a>
+        <a v-if="props.server.onlineMapUrl.trim() != ''" :href="props.server.onlineMapUrl"
+          >网页地图</a
+        >
       </span>
     </div>
   </div>
@@ -64,16 +71,16 @@ const props = defineProps({
   border: 2px solid transparent;
 }
 
-.item-border[type="focus"] {
+.item-border[type='focus'] {
   background-color: black;
   border: 2px solid white;
 }
 
-.item-border img {
+.item-border > img {
   position: relative;
 }
 
-.item-border:hover img::after {
+.item-border:hover > img::after {
   content: '';
   position: absolute;
   top: 0;
@@ -85,7 +92,7 @@ const props = defineProps({
   image-rendering: pixelated;
 }
 
-.item-border:hover img::before {
+.item-border:hover > img::before {
   content: '';
   position: absolute;
   top: 0;
@@ -115,5 +122,23 @@ const props = defineProps({
   margin-top: 0.5rem;
   margin-right: 0.5rem;
   margin-bottom: 0.5rem;
+}
+
+.server-status {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-text {
+  user-select: none;
+  color: #aaaaaa;
+}
+
+.status-img {
+  width: 20px;
+  height: 14px;
+  image-rendering: pixelated;
 }
 </style>

@@ -392,12 +392,12 @@ Admin
             "name": "string",
             "icon": "string",
             "description": "string",
+            "onlineMapUrl": "string",
             // If realtime is true, the following fields will be valid.
             "realtime": "boolean", 
             "online": "boolean",
             "playerCount": "number",
             "capacity": "number",
-            "onlineMapUrl": "string",
             "serverUrl": "string",
         },
         ...
@@ -420,11 +420,11 @@ Admin or server_admin
     "name": "string",
     "icon": "string",
     "description": "string",
+    "onlineMapUrl": "string",
     "realtime": "boolean",
     "online": "boolean",
     "playerCount": "number",
     "capacity": "number",
-    "onlineMapUrl": "string",
     "serverUrl": "string",
 }
 ```
@@ -496,7 +496,7 @@ Admin or server_admin
 
 `GET /news/total/:target`
 
-target: "information" | "magazine" | "notice" | "activity" | "document",
+target: "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
 
 - response
 
@@ -514,7 +514,7 @@ target: "information" | "magazine" | "notice" | "activity" | "document",
 
 ```json
 {
-    "target": "information" | "magazine" | "notice" | "activity" | "document",
+    "target": "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
     "page": "int",
     "page_size": "int",
     "pin": "boolean", // whether to show pinned news
@@ -565,7 +565,7 @@ target: "information" | "magazine" | "notice" | "activity" | "document",
         ...
     ],
     "author": "string:username",
-    "category": "information" | "magazine" | "notice" | "activity" | "document",
+    "category": "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
 }
 ```
 
@@ -592,7 +592,7 @@ target: "information" | "magazine" | "notice" | "activity" | "document",
         },
         ...
     ],
-    "category": "information" | "magazine" | "notice" | "activity" | "document",
+    "category": "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
 }
 ```
 
