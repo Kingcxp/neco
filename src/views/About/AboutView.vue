@@ -53,7 +53,7 @@ onMounted(async () => {
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
-  background-image: url('/background/links-background.png');
+  background-image: url('/background/links-background.jpg');
   background-size: cover;
   background-position: center;
 

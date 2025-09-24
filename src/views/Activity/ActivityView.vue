@@ -117,7 +117,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   background-color: #303030;
-  background-image: url('/background/header-bg.png'), url('/background/bg.png');
+  background-image: url('/background/header-bg.jpg'), url('/background/bg.jpg');
   background-repeat: repeat-x, repeat;
   background-position:
     top left,

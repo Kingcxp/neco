@@ -121,7 +121,7 @@ onMounted(async () => {
   align-items: center;
   padding-top: 5rem;
   box-sizing: border-box;
-  background-image: url('/background/list-background.png');
+  background-image: url('/background/list-background.jpg');
   background-position: center;
   background-size: cover;
 
@@ -129,7 +129,7 @@ onMounted(async () => {
 }
 
 .list-item-container {
-  flex: 3;
+  height: 72vh;
   width: 100%;
   border-top: 1px solid #eeeeee;
   border-bottom: 1px solid #eeeeee;
@@ -156,7 +156,7 @@ onMounted(async () => {
 }
 
 .server-options {
-  flex: 2;
+  flex: 1;
   width: 100%;
   display: flex;
   align-items: center;

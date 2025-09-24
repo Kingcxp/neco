@@ -21,7 +21,7 @@ const soundOn = () => {
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
-  background: #999 url('/background/bgbtn.png') center/cover;
+  background: #999 url('/background/bgbtn.jpg') center/cover;
   image-rendering: pixelated;
   border: 2px solid #000;
 }
