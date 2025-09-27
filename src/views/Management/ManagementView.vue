@@ -72,6 +72,12 @@ onMounted(async () => {
         @click="router.replace('/management/news')"
         >文章管理</MinecraftButtonClassic
       >
+      <MinecraftButtonClassic
+        class="management-nav"
+        :activated="route.path.endsWith('/management/document')"
+        @click="router.replace('/management/document')"
+        >文档管理</MinecraftButtonClassic
+      >
 
       <div style="display: flex; flex-direction: column; margin-top: auto">
         <MinecraftButtonClassic class="management-nav" @click="router.push('/')"
