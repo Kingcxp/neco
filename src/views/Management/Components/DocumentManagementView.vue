@@ -351,6 +351,12 @@ const onUploadImg = async (
     v-if="userGroup.includes('admin') || userGroup.includes('document_admin')"
     >新建文档</MinecraftButtonClassic
   >
+  <form class="management-tab-form">
+    <div class="management-tab-form-item">
+      <text class="management-tab-form-title">全部文档</text>
+      <text class="management-tab-form-subtitle"> 点击文档以编辑！ </text>
+    </div>
+  </form>
   <form
     id="edit-document"
     style="margin-bottom: 100vh"
@@ -368,6 +374,14 @@ const onUploadImg = async (
     <div class="document-input-item">
       <text class="document-input-label">ID</text>
       <MinecraftInput v-model="documentContent.id" class="document-input" disabled="true" />
+    </div>
+    <div class="document-input-item">
+      <text class="document-input-label">分类</text>
+      <MinecraftInput v-model="documentContent.category" class="document-input" disabled="true" />
+    </div>
+    <div class="document-input-item">
+      <text class="document-input-label">页签</text>
+      <MinecraftInput v-model="documentContent.tab" class="document-input" disabled="true" />
     </div>
     <div class="document-input-item">
       <text class="document-input-label">标题</text>
