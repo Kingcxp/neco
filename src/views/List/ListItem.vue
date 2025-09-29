@@ -31,9 +31,8 @@ const props = defineProps({
   <div class="item-border">
     <img
       :src="props.server.icon"
+      class="server-icon"
       alt="icon"
-      width="64"
-      height="64"
       style="border: 1px solid grey"
       @click="copy(props.server.serverUrl || '')"
     />
@@ -59,6 +58,7 @@ const props = defineProps({
 
 <style lang="css" scoped>
 .item-border {
+  position: relative;
   width: 100%;
   max-width: 768px;
   padding: 2px 4px;
@@ -76,30 +76,34 @@ const props = defineProps({
   border: 2px solid white;
 }
 
-.item-border > img {
+.server-icon {
   position: relative;
+  width: 64px;
+  height: 64px;
 }
 
-.item-border:hover > img::after {
+.item-border:hover::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 2px;
+  left: 4px;
+  width: 64px;
+  height: 64px;
   background: url('/UI/Arrow_Right.png') no-repeat center;
   background-size: 22px 34px;
   image-rendering: pixelated;
+  z-index: 256;
 }
 
-.item-border:hover > img::before {
+.item-border:hover::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 2px;
+  left: 4px;
+  width: 64px;
+  height: 64px;
   background: rgba(128, 128, 128, 0.7);
+  z-index: 128;
 }
 
 .item-info {

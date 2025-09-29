@@ -504,18 +504,6 @@ const onUploadImg = async (
           @click="newsType = 'magazine'"
           >社刊</MinecraftButtonClassic
         >
-        <MinecraftButtonClassic
-          class="news-button"
-          :activated="newsType === 'document'"
-          @click="newsType = 'document'"
-          >文档</MinecraftButtonClassic
-        >
-        <MinecraftButtonClassic
-          class="news-button"
-          :activated="newsType === 'hidden_document'"
-          @click="newsType = 'hidden_document'"
-          >内部文档</MinecraftButtonClassic
-        >
       </div>
     </div>
     <div class="news-input-item">

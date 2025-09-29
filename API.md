@@ -402,7 +402,7 @@ Admin or server_admin
 
 `GET /news/total/:target`
 
-target: "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
+target: "information" | "magazine" | "notice" | "activity",
 
 - response
 
@@ -420,7 +420,7 @@ target: "information" | "magazine" | "notice" | "activity" | "document" | "hidde
 
 ```json
 {
-    "target": "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
+    "target": "information" | "magazine" | "notice" | "activity",
     "page": "int",
     "page_size": "int",
     "pin": "boolean", // whether to show pinned news
@@ -471,7 +471,7 @@ target: "information" | "magazine" | "notice" | "activity" | "document" | "hidde
         ...
     ],
     "author": "string:username",
-    "category": "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
+    "category": "information" | "magazine" | "notice" | "activity",
 }
 ```
 
@@ -498,7 +498,7 @@ target: "information" | "magazine" | "notice" | "activity" | "document" | "hidde
         },
         ...
     ],
-    "category": "information" | "magazine" | "notice" | "activity" | "document" | "hidden_document",
+    "category": "information" | "magazine" | "notice" | "activity",
 }
 ```
 
@@ -526,7 +526,7 @@ with multipart/form-data file upload
 }
 ```
 
-#### Remove file resouece
+#### Remove file resource
 
 - request
 
@@ -718,6 +718,7 @@ sorry but i have no choice, parsing category field in url is too dangerous
         {
             "id": "string",
             "title": "string",
+            "description": "string",
         },
         ...
     ]
@@ -823,6 +824,7 @@ with multipart/form-data file upload
         }
     ],
     "contributor": "string",
+    "private": "boolean",
 }
 ```
 

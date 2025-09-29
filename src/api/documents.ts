@@ -4,6 +4,7 @@ import type { NewsSegment } from './newslist'
 export interface DocumentBrief {
   id: string
   title: string
+  description: string
 }
 
 export interface DocumentEntity {
@@ -13,7 +14,7 @@ export interface DocumentEntity {
   category: string
   tab: string
   priority: number
-  content: NewsSegment
+  content: NewsSegment[]
 
   // response only
   contributors?: string[] // usernames
@@ -22,6 +23,7 @@ export interface DocumentEntity {
 
   // request only
   contributor?: string // username
+  private?: boolean // should be visible to public
 }
 
 export const NewDocumentCategory = async (category: string): Promise<string | null> => {

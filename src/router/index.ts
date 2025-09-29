@@ -88,7 +88,7 @@ const router = createRouter({
           name: 'document management',
           component: () => import('../views/Management/Components/DocumentManagementView.vue'),
           meta: { title: 'NMO | 文档管理' },
-        }
+        },
       ],
     },
     {
