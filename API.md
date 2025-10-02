@@ -849,3 +849,62 @@ with multipart/form-data file upload
     "error": "string" // if error
 }
 ```
+
+#### Document List
+
+Get a list of DocumentBrief for display
+
+- request
+
+`POST /document/latest`
+
+```json
+{
+    "pageSize": "number",
+    "page": "number"
+}
+```
+
+- response
+
+```json
+{
+    "documents": [
+        {
+            "id": "string",
+            "title": "string",
+            "description": "string",
+        },
+        ...
+    ]
+}
+```
+
+#### Document Search
+
+- request
+
+`POST /document/search`
+
+```json
+{
+    "keyword": "string",
+    "pageSize": "number",
+    "page": "number"
+}
+```
+
+- response
+
+```json
+{
+    "documents": [
+        {
+            "id": "string",
+            "title": "string",
+            "description": "string",
+        },
+        ...
+    ]
+}
+```

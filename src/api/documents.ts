@@ -241,3 +241,32 @@ export const UpdateDocument = async (document: DocumentEntity): Promise<string |
     })
   return result
 }
+
+export const GetLatestDocuments = async (pageSize: number, page: number): Promise<DocumentBrief[]> => {
+  let result: DocumentBrief[] = []
+  await api
+    .post('/document/latest', {
+      pageSize: pageSize,
+      page: page,
+    })
+    .then((res) => {
+      result = (res.data.documents || []) as DocumentBrief[]
+    })
+    .catch(() => {})
+  return result
+}
+
+export const SearchDocuments = async (keyword: string, pageSize: number, page: number): Promise<DocumentBrief[]> => {
+  let result: DocumentBrief[] = []
+  await api
+    .post('/document/search', {
+      keyword: keyword,
+      pageSize: pageSize,
+      page: page,
+    })
+    .then((res) => {
+      result = (res.data.documents || []) as DocumentBrief[]
+    })
+    .catch(() => {})
+  return result
+}
