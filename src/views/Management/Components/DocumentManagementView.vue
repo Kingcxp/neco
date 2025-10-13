@@ -17,7 +17,10 @@ import UploadPdf from '@/components/icons/UploadPdf.vue'
 import MinecraftDialog from '@/components/utils/MinecraftDialog.vue'
 import MinecraftSwitch from '@/components/utils/MinecraftSwitch.vue'
 import {
+  DeleteDocument,
+  DeleteDocumentCategory,
   DeleteDocumentFile,
+  DeleteDocumentTab,
   GetAllCategories,
   GetAllTabs,
   GetDocument,
@@ -323,6 +326,7 @@ const commitdocument = async () => {
     if (documentContent.id === localStorage.getItem('documentId')) {
       localStorage.removeItem('documentId')
     }
+    onTabChange(tabActive.value)
   }
 }
 
@@ -360,6 +364,11 @@ const openDocument = async (index: number) => {
     status.value = 'edit'
     Object.assign(documentContent, document)
     loadContent(document.content)
+    if (!(userGroup.value.includes('admin') || userGroup.value.includes('document_admin'))) {
+      preview.value = true;
+    }
+  } else {
+    toast.error('获取文档失败！')
   }
 }
 
@@ -378,6 +387,33 @@ const onCategoryChange = async (index: number) => {
   allTabs.value = await GetAllTabs(allCategories.value[index])
   tabActive.value = 0
   await onTabChange(0)
+}
+
+const onTabDelete = async (index: number) => {
+  const result = await DeleteDocumentTab(allCategories.value[categoryActive.value], allTabs.value[index])
+  if (result) {
+    toast.error('删除标签失败！')
+  } else {
+    allTabs.value.splice(index, 1)
+  }
+}
+
+const onCategoryDelete = async (index: number) => {
+  const result = await DeleteDocumentCategory(allCategories.value[index])
+  if (result) {
+    toast.error('删除分类失败！')
+  } else {
+    allCategories.value.splice(index, 1)
+  }
+}
+
+const onDeleteDocument = async (index: number) => {
+  const result = await DeleteDocument(documentBriefs.value[index].id)
+  if (result) {
+    toast.error('删除文档失败！')
+  } else {
+    documentBriefs.value.splice(index, 1)
+  }
 }
 
 const addCategory = ref('')
@@ -433,7 +469,12 @@ onMounted(async () => {
           :active="index === categoryActive ? 'true' : 'false'"
           @click="onCategoryChange(index)"
         >
-          {{ category }}
+          <text class="document-list-text">
+            {{ category }}
+          </text>
+          <text class="document-list-delete-icon" @click="onCategoryDelete(index)">
+            X
+          </text>
         </div>
         <div class="document-list-input-item">
           <MinecraftInput
@@ -456,7 +497,12 @@ onMounted(async () => {
           :active="index === tabActive ? 'true' : 'false'"
           @click="onTabChange(index)"
         >
-          {{ tab }}
+          <text class="document-list-text">
+            {{ tab }}
+          </text>
+          <text class="document-list-delete-icon" @click="onTabDelete(index)">
+            X
+          </text>
         </div>
         <div class="document-list-input-item">
           <MinecraftInput
@@ -479,7 +525,12 @@ onMounted(async () => {
           :active="index === documentActive ? 'true' : 'false'"
           @click="openDocument(index)"
         >
-          {{ documentBrief.title }}
+          <text class="document-list-text">
+            {{ documentBrief.title }}
+          </text>
+          <text class="document-list-delete-icon" @click="onDeleteDocument(index)">
+            X
+          </text>
         </div>
         <div class="document-list-input-item">
           <MinecraftButtonClassic
@@ -544,6 +595,7 @@ onMounted(async () => {
             class="document-button"
             :activated="!preview"
             @click="((preview = false), scrollTo('md-editor'))"
+            v-if="userGroup.includes('admin') || userGroup.includes('document_admin')"
             >编辑</MinecraftButtonClassic
           >
           <MinecraftButtonClassic
@@ -816,9 +868,30 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  user-select: none;
   height: 2.5rem;
+  user-select: none;
+}
+
+.document-list-text {
   font-size: 1.2rem;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.document-list-delete-icon {
+  font-size: 1.5rem;
+  width: 2rem;
+  cursor: pointer;
+  transition: all .2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.document-list-delete-icon:hover {
+  color: #F56C6C;
 }
 
 .document-list-item[active="true"] {

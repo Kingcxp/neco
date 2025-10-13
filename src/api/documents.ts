@@ -131,7 +131,7 @@ export const GetAllTabs = async (category: string): Promise<string[]> => {
 export const GetDocuments = async (category: string, tab: string): Promise<DocumentBrief[]> => {
   let result: DocumentBrief[] = []
   await api
-    .post(`/document/list`, {
+    .post(`/document${localStorage.getItem('token') == '' ? '' : '/private'}/list`, {
       category: category,
       tab: tab,
     })
@@ -145,7 +145,7 @@ export const GetDocuments = async (category: string, tab: string): Promise<Docum
 export const GetDocument = async (id: string): Promise<DocumentEntity | null> => {
   let result: DocumentEntity | null = null
   await api
-    .get(`/document/${id}`)
+    .get(`/document${localStorage.getItem('token') == '' ? '' : '/private'}/${id}`)
     .then((res) => {
       result = res.data as DocumentEntity
     })
@@ -259,7 +259,7 @@ export const GetLatestDocuments = async (pageSize: number, page: number): Promis
 export const SearchDocuments = async (keyword: string, pageSize: number, page: number): Promise<DocumentBrief[]> => {
   let result: DocumentBrief[] = []
   await api
-    .post('/document/search', {
+    .post(`/document${localStorage.getItem('token') == '' ? '' : '/private'}/search`, {
       keyword: keyword,
       pageSize: pageSize,
       page: page,
