@@ -127,9 +127,9 @@ const saveEditUser = async () => {
   }
 }
 
-const loadEditUser = async (user: UserEntity) => {
+const loadEditUser = (user: UserEntity, index: number) => {
   editUsername.value = user.username
-  editAvatar.value = user.avatar || '/nmo-logo-large.png'
+  editAvatar.value = avatars.value[index] || '/nmo-logo-large.png'
   editAdminSwitch.value = (user.group || []).includes('admin')
   editNewsAdminSwitch.value = (user.group || []).includes('news_admin')
   editUserTags.value = JSON.parse(JSON.stringify(user.tags || []))
@@ -469,7 +469,7 @@ onMounted(async () => {
         class="user-card"
         v-for="(user, index) in filteredUsers"
         :key="user.username"
-        @click="(soundOn(), loadEditUser(user))"
+        @click="(soundOn(), loadEditUser(user, index))"
       >
         <DeleteIcon class="delete-user" @click.stop="onDeleteUser(user.username)" />
         <img
