@@ -256,7 +256,9 @@ onMounted(async () => {
   padding: 15px;
   box-shadow: 0 0 0 3px #000;
   transition: all 0.3s ease-in-out;
-  overflow: hidden;
+  overflow-x: hidden;
+  height: calc(100vh - 5rem);
+  overflow-y: scroll;
 }
 
 .documents-aside[type='shrink'] {
@@ -396,7 +398,9 @@ onMounted(async () => {
   border-top: 2px solid rgba(255, 255, 255, 0.6);
   border-bottom: 2px solid rgba(255, 255, 255, 0.6);
   transition: all 0.3s ease-in-out;
-  overflow: hidden;
+  overflow-x: hidden;
+  height: calc(100vh - 5rem);
+  overflow-y: scroll;
 }
 
 .documents-nav[type='shrink'] {
