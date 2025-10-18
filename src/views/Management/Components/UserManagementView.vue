@@ -159,48 +159,14 @@ const editDeleteTag = (index: number) => {
   editUserTags.value.splice(index, 1)
 }
 
-const updateLocalStorage = () => {
-  username.value = localStorage.getItem('username') || 'Undefined'
-  userGroup.value = JSON.parse(localStorage.getItem('userGroup') || '["admin"]')
-  userTags.value = JSON.parse(
-    localStorage.getItem('userTags') ||
-      `[
-      {
-        "text": "管理员",
-        "color": "#E6A23C",
-        "tagColor": "rgba(230, 162, 60, 0.1)"
-      }
-    ]`,
-  )
-}
-
-const usernameInput = ref(username)
 const oldPasswordInput = ref('')
 const newPasswordInput = ref('')
 const repeatPasswordInput = ref('')
-
-const resetChangeUsername = () => {
-  usernameInput.value = username.value
-}
 
 const resetChangePassword = () => {
   oldPasswordInput.value = ''
   newPasswordInput.value = ''
   repeatPasswordInput.value = ''
-}
-
-const onChangeUsername = async () => {
-  if (usernameInput.value.trim() === '') {
-    toast.error('用户名不能为空！')
-    return
-  }
-  const result = await UpdateUserInfo(usernameInput.value, userGroup.value, userTags.value)
-  if (!result) {
-    toast.success('修改成功！')
-    updateLocalStorage()
-  } else {
-    toast.error(`修改失败！`)
-  }
 }
 
 const onChangePassword = async () => {
@@ -393,21 +359,6 @@ onMounted(async () => {
           </div>
         </div>
       </div>
-    </div>
-  </form>
-  <form class="management-tab-form">
-    <text class="management-tab-form-title">修改用户名</text>
-    <div class="user-input">
-      <text class="user-input-label">用户名</text>
-      <MinecraftInput class="user-input-field" placeholder="输入用户名" v-model="usernameInput" />
-    </div>
-    <div class="form-btn-group">
-      <MinecraftButtonClassic class="user-input-button" @click="resetChangeUsername"
-        >重置</MinecraftButtonClassic
-      >
-      <MinecraftButtonClassic class="user-input-button" @click="onChangeUsername"
-        >保存</MinecraftButtonClassic
-      >
     </div>
   </form>
   <form class="management-tab-form">
