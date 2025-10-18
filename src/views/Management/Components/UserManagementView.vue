@@ -524,7 +524,7 @@ onMounted(async () => {
             v-model="editDocumentAdminSwitch"
             @on="editAdminSwitch = false"
           />
-          <text class="user-switch-label">服务器管理</text>
+          <text class="user-switch-label">文档管理</text>
         </div>
       </div>
       <div class="change-user-info-item" style="grid-column: span 2">
