@@ -20,7 +20,7 @@
 
 ### Auth
 
-User group includes ["admin", "news_admin", "server_admin"]. If empty, the user doesn"t have permission to manage corresponding resources.
+User group includes ["admin", "news_admin", "server_admin", "document_admin"]. If empty, the user doesn"t have permission to manage corresponding resources.
 
 Auth uses JWT Token.
 
@@ -593,6 +593,30 @@ with multipart/form-data file upload
 }
 ```
 
+#### Update Document Node
+
+- request
+
+`PUT /documents/node/:id`
+
+```json
+{
+    "private": "boolean",
+    "content": [{
+        "type": "markdown" | "pdf_file",
+        "content": "string", // markdown content or file url
+    }, ...],
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
+
 #### Rename Document Node
 
 - request
@@ -622,7 +646,7 @@ with multipart/form-data file upload
 ```json
 {
     "parentId": "string", // Should be "root" if there is no parent
-    "isFolder": "string",
+    "isFolder": "boolean",
     "private": "boolean",
 
     "name": "string"
@@ -654,6 +678,7 @@ with multipart/form-data file upload
             "private": "boolean",
 
             "name": "string",
+            "contributors": "string[]", // invalid if isFolder is true
             "content": [{
                 "type": "markdown" | "pdf_file",
                 "content": "string", // markdown content or file url
