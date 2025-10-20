@@ -593,6 +593,26 @@ with multipart/form-data file upload
 }
 ```
 
+#### Rebind Document Node
+
+- request
+
+`POST /documents/node/:id`
+
+```json
+{
+    "parentId": "string", // Should be "root" if there is no parent
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
+
 #### Update Document Node
 
 - request
