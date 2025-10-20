@@ -579,17 +579,29 @@ with multipart/form-data file upload
 
 ### Document
 
-#### Create Document Category
-
-sorry but i have no choice, parsing category field in url is too dangerous
+#### Delete Document Node
 
 - request
 
-`POST /document/category`
+`DELETE /documents/node/:id`
+
+- response
 
 ```json
 {
-    "category": "string",
+    "error": "string" // if error
+}
+```
+
+#### Rename Document Node
+
+- request
+
+`PATCH /documents/node/:id`
+
+```json
+{
+    "name": "string"
 }
 ```
 
@@ -601,230 +613,19 @@ sorry but i have no choice, parsing category field in url is too dangerous
 }
 ```
 
-#### Delete Document Category
+#### Create Document Node
 
 - request
 
-`PATCH /document/category`
+`POST /documents/node`
 
 ```json
 {
-    "category": "string",
-}
-```
-
-- response
-
-```json
-{
-    "error": "string" // if error
-}
-```
-
-#### Get All Categories
-
-- request
-
-`GET /document/categories`
-
-- response
-
-```json
-{
-    "categories": "string[]"
-}
-```
-
-#### Create Document Tab
-
-- request
-
-`POST /document/tab`
-
-```json
-{
-    "category": "string",
-    "tab": "string",
-}
-```
-
-- response
-
-```json
-{
-    "error": "string" // if error
-}
-```
-
-#### Delete Document Tab
-
-- request
-
-`PATCH /document/tab`
-
-```json
-{
-    "category": "string",
-    "tab": "string",
-}
-```
-
-- response
-
-```json
-{
-    "error": "string" // if error
-}
-```
-
-#### Get All Tabs
-
-- request
-
-`POST /document/tabs`
-
-```json
-{
-    "category": "string",
-}
-```
-
-- response
-
-```json
-{
-    "tabs": "string[]"
-}
-```
-
-#### Get Document List
-
-- request
-
-`POST /document/list`
-
-```json
-{
-    "category": "string",
-    "tab": "string",
-}
-```
-
-- response
-
-```json
-{
-    "documents": [
-        {
-            "id": "string",
-            "title": "string",
-            "description": "string",
-        },
-        ...
-    ]
-}
-```
-
-#### Get Document Detail
-
-- request
-
-`GET /document/:id`
-
-- response
-
-```json
-{
-    "id": "string",
-    "title": "string",
-    "description": "string",
-    "category": "string",
-    "tab": "string",
-    "contributors": "string[]",
-    "priority": "number",
-    "content": [
-        {
-            "type": "markdown" | "pdf_file",
-            "content": "string", // markdown content or file url
-        }
-    ],
-    "createTime": "string", // yyyy-MM-dd
-    "updateTime": "string", // yyyy-MM-dd
-}
-```
-
-#### Require Document Id
-
-- request
-
-`POST /document/id`
-
-- response
-
-```json
-{
-    "id": "string", // undefined if error
-}
-```
-
-#### Upload Document File
-
-- request
-
-`POST /document/upload/:id`
-
-with multipart/form-data file upload
-
-- response
-
-```json
-{
-    "url": "string" // will be combined with backend url base, should be undefined if error
-}
-```
-
-#### Remove Document File
-
-- request
-
-`POST /document/delete/:id`
-
-```json
-{
-    "url": "string" // backend url base should be removed
-}
-```
-
-- response
-
-```json
-{
-    "error": "string" // if error
-}
-```
-
-#### Update Document
-
-- request
-
-`PATCH /document/:id`
-
-```json
-{
-    "id": "string",
-    "title": "string",
-    "description": "string",
-    "category": "string",
-    "tab": "string",
-    "priority": "number",
-    "content": [
-        {
-            "type": "markdown" | "pdf_file",
-            "content": "string", // markdown content or file url
-        }
-    ],
-    "contributor": "string",
+    "parentId": "string", // Should be "root" if there is no parent
+    "isFolder": "string",
     "private": "boolean",
+
+    "name": "string"
 }
 ```
 
@@ -832,79 +633,59 @@ with multipart/form-data file upload
 
 ```json
 {
+    "id": "string", // if not error
     "error": "string" // if error
 }
 ```
 
-#### Delete Document
+#### Get Document Tree Layer (include private document)
 
-- request
-
-`DELETE /document/:id`
+`GET /documents/layer/private/:parentId` // parentId should be "root" if there is no parent
 
 - response
 
 ```json
 {
-    "error": "string" // if error
-}
-```
-
-#### Document List
-
-Get a list of DocumentBrief for display
-
-- request
-
-`POST /document/latest`
-
-```json
-{
-    "pageSize": "number",
-    "page": "number"
-}
-```
-
-- response
-
-```json
-{
-    "documents": [
+    "children": [
         {
+            "parentId": "string", // Should be "root" if there is no parent
             "id": "string",
-            "title": "string",
-            "description": "string",
-        },
-        ...
+            "isFolder": "boolean",
+            "private": "boolean",
+
+            "name": "string",
+            "content": [{
+                "type": "markdown" | "pdf_file",
+                "content": "string", // markdown content or file url
+            }, ...], // invalid if isFolder is true
+            "updateTime": "string" // format: yyyy-MM-dd, invalid if isFolder is true
+        }
     ]
 }
 ```
 
-#### Document Search
+#### Get Document Tree Layer
 
-- request
-
-`POST /document/search`
-
-```json
-{
-    "keyword": "string",
-    "pageSize": "number",
-    "page": "number"
-}
-```
+`GET /documents/layer/:parentId` // parentId should be "root" if there is no parent
 
 - response
 
 ```json
 {
-    "documents": [
+    "children": [
         {
+            "parentId": "string", // Should be "root" if there is no parent
             "id": "string",
-            "title": "string",
-            "description": "string",
-        },
-        ...
+            "isFolder": "boolean",
+            "private": "boolean",
+
+            "name": "string",
+            "content": [{
+                "type": "markdown" | "pdf_file",
+                "content": "string", // markdown content or file url
+            }, ...], // invalid if isFolder is true
+            "updateTime": "string" // format: yyyy-MM-dd, invalid if isFolder is true
+        }
     ]
 }
 ```
