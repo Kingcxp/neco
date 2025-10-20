@@ -734,3 +734,39 @@ with multipart/form-data file upload
     ]
 }
 ```
+
+#### Upload file resource
+
+- request
+
+`POST /documents/upload/:id`
+
+with multipart/form-data file upload
+
+- response
+
+```json
+{
+    "url": "string" // will be combined with backend url base, should be undefined if error
+}
+```
+
+#### Remove file resource
+
+- request
+
+`DELETE /documents/upload/:id`
+
+```json
+{
+    "url": "string" // backend url base should be removed
+}
+```
+
+- response
+
+```json
+{
+    "error": "string" // if error
+}
+```
