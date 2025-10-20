@@ -697,15 +697,29 @@ with multipart/form-data file upload
             "isFolder": "boolean",
             "private": "boolean",
 
-            "name": "string",
-            "contributors": "string[]", // invalid if isFolder is true
-            "content": [{
-                "type": "markdown" | "pdf_file",
-                "content": "string", // markdown content or file url
-            }, ...], // invalid if isFolder is true
-            "updateTime": "string" // format: yyyy-MM-dd, invalid if isFolder is true
+            "name": "string"
         }
     ]
+}
+```
+
+#### Get Document Detail
+
+- request
+
+`GET /documents/:id`
+
+- response
+
+```json
+{
+    "name": "string",
+    "contributors": "string[]", // invalid if isFolder is true
+    "content": [{
+        "type": "markdown" | "pdf_file",
+        "content": "string", // markdown content or file url
+    }, ...], // invalid if isFolder is true
+    "updateTime": "string" // format: yyyy-MM-dd, invalid if isFolder is true
 }
 ```
 
