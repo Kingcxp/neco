@@ -6,10 +6,13 @@ export interface ServerEntity {
   description: string
   onlineMapUrl: string
   realtime: boolean
+  serverUrl?: string
+
+  latency?: number
+  version?: string
   online?: boolean
   playerCount?: number
   capacity?: number
-  serverUrl?: string
 }
 
 // Static infomation list.

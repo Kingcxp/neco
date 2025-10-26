@@ -4,6 +4,7 @@ import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { MdPreview } from 'md-editor-v3'
 import MinecraftButton from '@/components/utils/MinecraftButton.vue'
+import PdfViewer from '@/components/PdfViewer.vue'
 
 const newsId = useRoute().params.id
 const newsDetail = ref<NewsDetail | null>(null)
@@ -77,7 +78,7 @@ onMounted(async () => {
             </div>
             <div
               class="news-detail-author-info-item"
-              v-if="newsDetail?.entity.endDate === undefined || newsDetail.entity.endDate === newsDetail.entity.date"
+              v-if="newsDetail?.entity.endDate === undefined"
             >
               <div class="news-detail-author-title">发布日期</div>
               <div class="news-detail-author-text">{{ newsDetail?.entity.date }}</div>
@@ -108,11 +109,11 @@ onMounted(async () => {
               @click="scrollToIndex(index)"
               >↓ 最佳阅读位置</MinecraftButton
             >
-            <iframe
+            <PdfViewer
               :id="`pdf-renderer-${index}`"
               v-if="item.type === 'pdf_file'"
               class="pdf-renderer mc-border"
-              :src="`/pdfjs/web/viewer.html?file=${encodeURIComponent(item.content)}`"
+              :pdf-url="item.content"
             />
           </div>
         </div>
@@ -146,13 +147,11 @@ onMounted(async () => {
 }
 
 .news-poster-img {
-  width: 85%;
-  margin-bottom: 3rem;
-  height: auto;
-  object-fit: cover;
-  object-position: center;
+  max-width: 85%;
+  max-height: calc(75vh - 3rem);
   border-style: none;
   user-select: none;
+  margin-bottom: 3rem;
 }
 
 .news-poster-category {

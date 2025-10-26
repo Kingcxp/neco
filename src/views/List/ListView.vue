@@ -90,8 +90,8 @@ onMounted(async () => {
           '--delay': serverList.indexOf(server) * 0.2 + 's',
         }"
         :ping-icon="serverPing[index]"
-        :key="server.name"
-        :server="server"
+        :key="index"
+        v-model:server="serverList[index]"
         @click="onClick(index)"
         @dblclick="focusIndex === index ? copy(server.serverUrl || 'undefined') : null"
         :type="focusIndex === index ? 'focus' : ''"

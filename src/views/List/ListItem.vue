@@ -2,6 +2,10 @@
 import useClipboard from 'vue-clipboard3'
 import { useToast } from 'vue-toastification'
 import { type ServerEntity } from '../../api/serverlist'
+import DeleteIcon from '@/components/icons/DeleteIcon.vue'
+import mc from 'minecraftstatuspinger'
+import { onMounted } from 'vue'
+import type { ServerStatus } from 'minecraftstatuspinger/dist/types/types'
 
 const toast = useToast()
 const { toClipboard } = useClipboard()
@@ -16,10 +20,6 @@ const copy = async (text: string) => {
 }
 
 const props = defineProps({
-  server: {
-    type: Object as () => ServerEntity,
-    required: true,
-  },
   pingIcon: {
     type: String,
     required: true,
@@ -30,38 +30,58 @@ const props = defineProps({
   }
 })
 
+const server = defineModel('server', {
+  type: Object as () => ServerEntity,
+  required: true,
+})
+
 const emit = defineEmits(['delete'])
+
+onMounted(async () => {
+  if (!server.value.realtime) {
+    return
+  }
+  const result: ServerStatus = await mc.lookup({
+    host: server.value.serverUrl?.split(':')[0] || '???',
+    port: parseInt(server.value.serverUrl?.split(':')[1] || '25565'),
+    ping: true,
+  })
+  console.log(result)
+  if (result.latency) {
+    server.value.latency = result.latency
+  }
+})
 </script>
 
 <template>
   <div class="item-border">
     <img
-      :src="props.server.icon"
+      :src="server.icon"
       class="server-icon"
       alt="icon"
       style="border: 1px solid grey"
-      @click="copy(props.server.serverUrl || '')"
+      @click="copy(server.serverUrl || '')"
     />
     <div class="item-info">
-      <span style="color: white; font-size: 1.1rem">{{ props.server.name }}</span>
-      <span>{{ props.server.description }}</span>
+      <span style="color: white; font-size: 1.1rem">{{ server.name }}</span>
+      <span>{{ server.description }}</span>
     </div>
     <div class="item-status">
       <span class="server-status">
-        <text class="status-text" v-if="props.server.realtime && props.server.online"
-          >{{ props.server.playerCount || 0 }}/{{ props.server.capacity || 0 }}</text
+        <text class="status-text" v-if="server.realtime && server.online"
+          >{{ server.playerCount || 0 }}/{{ server.capacity || 0 }}</text
         >
         <img class="status-img" :src="props.pingIcon" alt="pingIcon" />
       </span>
       <span style="margin-top: auto; display: flex; align-items: center; justify-content: center;">
-        <a v-if="props.server.onlineMapUrl.trim() != ''" :href="props.server.onlineMapUrl"
+        <a v-if="server.onlineMapUrl.trim() != ''" :href="server.onlineMapUrl"
           >网页地图</a
         >
-        <text
+        <DeleteIcon
           class="delete-icon"
           v-if="props.withDelete"
           @click="emit('delete')"
-        >X</text>
+        />
       </span>
     </div>
   </div>
@@ -162,8 +182,9 @@ const emit = defineEmits(['delete'])
   align-items: center;
   justify-content: center;
   margin-left: 0.5rem;
+  height: 1.2rem;
+  width: 1.2rem;
 
-  font-size: 1.5rem;
   user-select: none;
   cursor: pointer;
   transition: all 0.1s ease-in-out;
