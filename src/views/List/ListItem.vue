@@ -108,6 +108,7 @@ onMounted(async () => {
 }
 
 .item-border:hover::after {
+  pointer-events: none;
   content: '';
   position: absolute;
   top: 2px;
@@ -121,6 +122,7 @@ onMounted(async () => {
 }
 
 .item-border:hover::before {
+  pointer-events: none;
   content: '';
   position: absolute;
   top: 2px;
