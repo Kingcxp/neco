@@ -49,7 +49,7 @@ onMounted(async () => {
 <template>
   <div class="item-border">
     <img
-      :src="server.icon"
+      :src="server.status?.icon || server.icon"
       class="server-icon"
       alt="icon"
       @click="copy(server.serverUrl || '')"

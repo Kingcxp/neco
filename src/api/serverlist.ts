@@ -1,6 +1,7 @@
 import { api } from './api'
 
 export interface ServerStatus {
+  icon?: string
   online?: boolean
   latency?: number
   version?: string

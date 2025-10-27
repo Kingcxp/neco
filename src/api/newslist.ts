@@ -68,7 +68,7 @@ export const GetNewsDetail = async (id: string): Promise<NewsDetail | null> => {
     .then(async (res) => {
       const authorResult = await GetUserInfo(res.data.author)
       const avatarResult = await GetAvatar(res.data.author)
-      if (!authorResult || !avatarResult) {
+      if (authorResult === null || avatarResult === null) {
         return
       }
       result = {
