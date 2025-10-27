@@ -134,6 +134,8 @@ const loadEditUser = (user: UserEntity, index: number) => {
   editAvatar.value = avatars.value[index] || '/nmo-logo-large.png'
   editAdminSwitch.value = (user.group || []).includes('admin')
   editNewsAdminSwitch.value = (user.group || []).includes('news_admin')
+  editServerAdminSwitch.value = (user.group || []).includes('server_admin')
+  editDocumentAdminSwitch.value = (user.group || []).includes('document_admin')
   editUserTags.value = JSON.parse(JSON.stringify(user.tags || []))
   editInputTagText.value = ''
   editInputTagColor.value = '#E6A23C'
