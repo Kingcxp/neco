@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue'
-import { AddServer, DeleteServer, GetServerList, UpdateServer, type ServerEntity } from '@/api/serverlist'
+import { CreateServer, DeleteServer, GetServerList, UpdateServer, type ServerEntity } from '@/api/serverlist'
 import ListItem from '@/views/List/ListItem.vue'
 import MinecraftButtonClassic from '@/components/utils/MinecraftButtonClassic.vue'
 import MinecraftDialog from '@/components/utils/MinecraftDialog.vue'
@@ -80,6 +80,7 @@ const onEditIcon = () => {
 }
 
 const server = reactive({
+  id: '',
   name: '',
   icon: '',
   description: '',
@@ -104,7 +105,7 @@ const commitServer = async () => {
   }
   let result: string | null = null
   if (editStatus.value === 'new') {
-    result = await AddServer(server)
+    result = await UpdateServer(server)
   } else if (editStatus.value === 'edit') {
     result = await UpdateServer(serverList.value[focusIndex.value])
   }
@@ -113,6 +114,7 @@ const commitServer = async () => {
     editStatus.value = 'none'
     focusIndex.value = -1
     Object.assign(server, {
+      id: '',
       name: '',
       icon: '',
       description: '',
@@ -127,9 +129,21 @@ const commitServer = async () => {
   }
 }
 
-const onNewServer = () => {
+const onNewServer = async () => {
+  let serverId: string = localStorage.getItem('serverId') || ''
+  if (serverId.trim() === '') {
+    serverId = await CreateServer() || ''
+    if (serverId.trim() === '') {
+      toast.error('创建服务器失败！')
+      editStatus.value = 'none'
+      return
+    } else {
+      localStorage.setItem('serverId', serverId)
+    }
+  }
   editStatus.value = 'new'
   Object.assign(server, {
+    id: serverId,
     name: '',
     icon: '',
     description: '',
@@ -262,6 +276,15 @@ onMounted(async () => {
   >
   <form class="management-tab-form" v-if="editStatus !== 'none'">
     <text class="management-tab-form-title">编辑服务器信息</text>
+    <div class="server-input-item">
+      <text class="server-input-label">服务器 ID</text>
+      <MinecraftInput
+        class="server-input"
+        v-model="server.name"
+        placeholder="请输入服务器 ID"
+        :disabled="true"
+      />
+    </div>
     <div class="server-input-item">
       <text class="server-input-label">名称</text>
       <MinecraftInput

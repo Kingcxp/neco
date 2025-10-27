@@ -325,6 +325,7 @@ Remove session.
 {
     "online": "boolean",
     // If online is true, the following fields should be available
+    "icon": "string",
     "playerCount": "number",
     "capacity": "number",
     "latency": "number",
@@ -332,45 +333,21 @@ Remove session.
 }
 ```
 
-#### Add Server
-
-- auth
-
-Admin or server_admin
+#### Create Server
 
 - request
 
-`POST /server`
-
-```json
-{
-    "name": "string",
-    "icon": "string",
-    "description": "string",
-    "onlineMapUrl": "string",
-    "realtime": "boolean",
-    "online": "boolean",
-    "playerCount": "number",
-    "capacity": "number",
-    "serverUrl": "string",
-}
-```
+`GET /server/create`
 
 - response
 
 ```json
 {
-    "error": "string" // if error
+    "id": "string"
 }
 ```
 
 #### Update Server
-
-Doesn't support updating name section! Please Delete and Create a new one.
-
-- auth
-
-Admin or server_admin
 
 - request
 
@@ -378,13 +355,11 @@ Admin or server_admin
 
 ```json
 {
+    "id": "string",
     "name": "string",
     "icon": "string",
     "description": "string",
     "realtime": "boolean",
-    "online": "boolean",
-    "playerCount": "number",
-    "capacity": "number",
     "onlineMapUrl": "string",
     "serverUrl": "string",
 }

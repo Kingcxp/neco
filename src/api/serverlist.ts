@@ -10,6 +10,7 @@ export interface ServerStatus {
 }
 
 export interface ServerEntity {
+  id: string
   name: string
   icon: string
   description: string
@@ -44,20 +45,16 @@ export const GetServerStatus = async (url: string): Promise<ServerStatus | null>
   return result
 }
 
-export const AddServer = async (server: ServerEntity): Promise<string | null> => {
+export const CreateServer = async (): Promise<string | null> => {
   let result: string | null = null
   await api
-    .post('/server', server)
+    .get(`/server/create`)
     .then((res) => {
-      if (res.data.error) {
-        result = res.data.error as string
+      if (res.data.id) {
+        result = res.data.id as string
       }
     })
-    .catch((err) => {
-      if (err.response && err.response.data.error) {
-        result = err.response.data.error as string
-      }
-    })
+    .catch(() => {})
   return result
 }
 
