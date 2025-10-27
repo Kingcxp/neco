@@ -111,6 +111,9 @@ const commitServer = async () => {
   }
   if (!result) {
     toast.success('服务器信息保存成功！')
+    if (server.id === localStorage.getItem('serverId')) {
+      localStorage.removeItem('serverId')
+    }
     editStatus.value = 'none'
     focusIndex.value = -1
     Object.assign(server, {
