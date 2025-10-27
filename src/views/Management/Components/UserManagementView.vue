@@ -118,6 +118,8 @@ const saveEditUser = async () => {
   const group = []
   if (editAdminSwitch.value) group.push('admin')
   if (editNewsAdminSwitch.value) group.push('news_admin')
+  if (editServerAdminSwitch.value) group.push('server_admin')
+  if (editDocumentAdminSwitch.value) group.push('document_admin')
 
   const result = await UpdateUserInfo(editUsername.value, group, editUserTags.value)
   if (!result) {
