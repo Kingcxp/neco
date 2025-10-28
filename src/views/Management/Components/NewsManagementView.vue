@@ -2,6 +2,7 @@
 import {
   CreateNews,
   DeleteFile,
+  DeleteNews,
   GetNewsDetail,
   UpdateNews,
   UploadFile,
@@ -31,6 +32,7 @@ import LoadNews from '@/components/icons/LoadNews.vue'
 import MinecraftSwitch from '@/components/utils/MinecraftSwitch.vue'
 import PlusIcon from '@/components/icons/PlusIcon.vue'
 import PdfViewer from '@/components/PdfViewer.vue'
+import { EventBus } from '@/eventbus/EventBus'
 
 const editorToolbars = ref<ToolbarNames[]>([
   'bold',
@@ -392,8 +394,34 @@ const loadNews = () => {
   }
 }
 
+const deleteNews = async () => {
+  if (newsId.value.trim() === '') {
+    toast.warning('请选择文章！')
+    return
+  }
+  const result = await DeleteNews(newsId.value)
+  if (result) {
+    toast.error('删除文章失败！')
+  } else {
+    toast.success('删除文章成功！')
+    status.value = 'none'
+    newsTitle.value = ''
+    newsBrief.value = ''
+    newsContent.value = []
+    newsImage.value = ''
+    newsText.value = ''
+    newsPdfFiles.value = []
+    newsImgFiles.value = []
+    newsPin.value = false
+    newsType.value = 'information'
+    newsDate.value = formatDate(new Date())
+    newsEndDate.value = nextYear(new Date())
+
+    EventBus.emit('NewsManagement::refresh')
+  }
+}
+
 const commitNews = async () => {
-  console.log(newsDate.value)
   if (newsTitle.value.trim() === '') {
     toast.warning('请输入标题！')
     return
@@ -436,6 +464,7 @@ const commitNews = async () => {
     toast.error('上传文章失败！')
   } else {
     toast.success('上传文章成功！')
+    EventBus.emit('NewsManagement::refresh')
     if (newsId.value === localStorage.getItem('newsId')) {
       localStorage.removeItem('newsId')
     }
@@ -633,7 +662,10 @@ const onUploadImg = async (
         </div>
       </div>
     </div>
-    <MinecraftButtonClassic @click="commitNews">保存</MinecraftButtonClassic>
+    <div class="operation-btn-group">
+      <MinecraftButtonClassic @click="deleteNews">删除</MinecraftButtonClassic>
+      <MinecraftButtonClassic @click="commitNews">保存</MinecraftButtonClassic>
+    </div>
   </form>
   <MinecraftDialog title="添加 PDF 文件" v-model="showPdfDialog">
     <div class="pdf-options-container">
@@ -824,6 +856,11 @@ const onUploadImg = async (
 
 .news-image-picture:hover::after {
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+.operation-btn-group {
+  display: flex;
+  gap: 1rem;
 }
 </style>
 
