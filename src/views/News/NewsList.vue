@@ -34,6 +34,7 @@ const refreshNews = () => {
   newsLoading.value = true
   emit('need-scroll')
   setTimeout(async () => {
+    newsTotal.value = await GetNewsTotal(model.value as NewsTarget)
     news.value = await GetNews(model.value as NewsTarget, page.value, pageSize.value)
     newsLoading.value = false
   }, 500)
