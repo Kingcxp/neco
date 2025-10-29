@@ -19,7 +19,12 @@ onMounted(async () => {
       <img src="/nmo-logo-large.png" alt="logo" style="width: 5rem; user-select: none" />
       <p style="user-select: none">南京大学 Minecraft 协会</p>
       <text style="margin-bottom: 0.5rem">{{ slogan }}</text>
-      <span id="copyright" style="user-select: none"> © 2025 - All rights reserved | 浙ICP备2022000762号-1 </span>
+      <span id="copyright" style="user-select: none">
+        © 2025 - All rights reserved |
+        <a style="color: rgb(128, 128, 128)" href="https://beian.miit.gov.cn/"
+          >浙ICP备2022000762号-1</a
+        >
+      </span>
       <span id="declaration" style="user-select: none">
         NOT AN OFFICIAL MINECRAFT ORGANIZATION <br />
         NOT APPROVED BY OR ASSOCIATED WITH MOJANG OR MICROSOFT

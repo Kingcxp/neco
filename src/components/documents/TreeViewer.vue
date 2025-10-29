@@ -1,5 +1,12 @@
 <script lang="ts" setup>
-import { CreateDocument, DeleteDocument, GetDocumentLayer, RebindDocument, RenameDocument, type DocumentNode } from '@/api/documents'
+import {
+  CreateDocument,
+  DeleteDocument,
+  GetDocumentLayer,
+  RebindDocument,
+  RenameDocument,
+  type DocumentNode,
+} from '@/api/documents'
 import { onMounted, onUnmounted, ref } from 'vue'
 import MinecraftButton from '../utils/MinecraftButton.vue'
 import MinecraftDialog from '../utils/MinecraftDialog.vue'
@@ -16,7 +23,7 @@ EventBus.on('TreeViewer::closeAllMenu', () => {
 })
 
 EventBus.on('TreeViewer::dragDrop', async (parentId: unknown) => {
-  if (props.id !== parentId as string) {
+  if (props.id !== (parentId as string)) {
     return
   }
   await onExpand(true)
@@ -27,7 +34,7 @@ const toast = useToast()
 const props = defineProps({
   parentId: {
     type: String,
-    default: "root",
+    default: 'root',
   },
   id: {
     type: String,
@@ -40,11 +47,11 @@ const props = defineProps({
   disableEdit: {
     type: Boolean,
     default: false,
-  }
+  },
 })
 const name = defineModel('name', {
   type: String,
-  default: 'root'
+  default: 'root',
 })
 const selectedId = defineModel({
   type: String,
@@ -68,8 +75,10 @@ const toggleExpand = async () => {
   }
 }
 
-let mouseX = 0, mouseY = 0
-let menuX = 0, menuY = 0
+let mouseX = 0,
+  mouseY = 0
+let menuX = 0,
+  menuY = 0
 const isGlobal = ref(false)
 
 document.addEventListener('mousemove', (event: MouseEvent) => {
@@ -82,11 +91,7 @@ document.addEventListener('click', () => {
   documentMenuShow.value = false
 })
 
-type InputTitle = 'none'
-   | '新建文件夹'
-   | '重命名文件夹'
-   | '新建文档'
-   | '重命名文档'
+type InputTitle = 'none' | '新建文件夹' | '重命名文件夹' | '新建文档' | '重命名文档'
 const inputTitle = ref<InputTitle>('none')
 const inputDialogShow = ref(false)
 const isPrivate = ref(false)
@@ -125,7 +130,7 @@ const onInputDialogConfirm = async () => {
       parentId: props.parentId,
       name: input.value,
       private: isPrivate.value,
-      isFolder: false
+      isFolder: false,
     })
     if (result) {
       toast.success('创建文档成功！')
@@ -332,13 +337,10 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
     @dragleave.prevent.stop="onFolderLeave"
     @drop.prevent.stop="onDragDrop"
     :id="`root-${props.id}`"
-    style="user-select: none;"
+    style="user-select: none"
     @contextmenu.stop="onFolderMenu($event, true)"
   >
-    <details
-      class="document"
-      @contextmenu.stop="onFolderMenu($event, false)"
-    >
+    <details class="document" @contextmenu.stop="onFolderMenu($event, false)">
       <summary
         :draggable="props.disableEdit ? 'false' : 'true'"
         @dragstart="onFolderDrag"
@@ -349,7 +351,7 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         }"
         @click="toggleExpand"
       >
-        <span style="z-index: 4;">{{ name }}</span>
+        <span style="z-index: 4">{{ name }}</span>
       </summary>
       <div v-for="child in children" :key="child.id">
         <TreeViewer
@@ -378,7 +380,7 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
               '--display': `${selectedId === child.id ? 'block' : 'none'}`,
             }"
           >
-            <span style="z-index: 4;">{{ child.name }}</span>
+            <span style="z-index: 4">{{ child.name }}</span>
           </summary>
         </details>
       </div>
@@ -396,20 +398,20 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         v-if="!isGlobal && props.parentId !== 'root'"
         class="document-menu-btn"
         @click.stop="onRenameFolder"
-      >重命名</MinecraftButton>
+        >重命名</MinecraftButton
+      >
       <MinecraftButton
         v-if="!isGlobal && props.parentId !== 'root'"
         class="document-menu-btn"
         @click.stop="onDeleteFolder"
-      >删除</MinecraftButton>
-      <MinecraftButton
-        class="document-menu-btn"
-        @click.stop="onNewFolder"
-      >新建文件夹</MinecraftButton>
-      <MinecraftButton
-        class="document-menu-btn"
-        @click.stop="onNewDocument"
-      >新建文档</MinecraftButton>
+        >删除</MinecraftButton
+      >
+      <MinecraftButton class="document-menu-btn" @click.stop="onNewFolder"
+        >新建文件夹</MinecraftButton
+      >
+      <MinecraftButton class="document-menu-btn" @click.stop="onNewDocument"
+        >新建文档</MinecraftButton
+      >
     </div>
     <div
       ref="folderMenuRef"
@@ -424,21 +426,19 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         v-if="!isGlobal && props.parentId !== 'root'"
         class="document-menu-btn"
         @click.stop="onRenameDocument"
-      >重命名</MinecraftButton>
+        >重命名</MinecraftButton
+      >
       <MinecraftButton
         v-if="!isGlobal && props.parentId !== 'root'"
         class="document-menu-btn"
         @click.stop="onDeleteDocument"
-      >删除</MinecraftButton>
+        >删除</MinecraftButton
+      >
     </div>
-    <MinecraftDialog
-      v-model="inputDialogShow"
-      :title="inputTitle"
-      @confirm="onInputDialogConfirm"
-    >
+    <MinecraftDialog v-model="inputDialogShow" :title="inputTitle" @confirm="onInputDialogConfirm">
       <div class="dialog-input-item">
         <span class="dialog-input-label">仅内部可见</span>
-        <MinecraftSwitch v-model="isPrivate"/>
+        <MinecraftSwitch v-model="isPrivate" />
       </div>
       <MinecraftInput
         class="dialog-input"
@@ -454,7 +454,9 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
       confirm-text="没错！"
       @confirm="onDeleteConfirm"
     >
-      <span class="delete-title">确定要删除{{ deleteType === 'document' ? `文档 ${curName}` : `文件夹 ${name}` }} 吗？</span>
+      <span class="delete-title"
+        >确定要删除{{ deleteType === 'document' ? `文档 ${curName}` : `文件夹 ${name}` }} 吗？</span
+      >
       <span class="delete-subtitle">它将会永远消失！（真的很久！）</span>
     </MinecraftDialog>
   </div>
@@ -546,7 +548,7 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
   );
   transform: scaleX(57.14%) rotate(-90deg);
   margin-right: 0.5rem;
-  transition: transform .15s ease;
+  transition: transform 0.15s ease;
 }
 
 .document[open] > .document-name::before {
@@ -576,8 +578,8 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
 }
 
 .dialog-input {
-  font-size: 1.2rem!important;
-  padding: 4px!important;
+  font-size: 1.2rem !important;
+  padding: 4px !important;
 }
 
 .dialog-input-item {

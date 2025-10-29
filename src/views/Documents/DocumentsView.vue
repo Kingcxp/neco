@@ -51,7 +51,7 @@ const startResize = (event: MouseEvent) => {
   isResizing = true
 
   startX = event.clientX
-  startWidth = resizeContainerRef.value.offsetWidth;
+  startWidth = resizeContainerRef.value.offsetWidth
 
   document.addEventListener('mousemove', handleMouseMove)
   document.addEventListener('mouseup', stopResize)
@@ -143,26 +143,25 @@ onUnmounted(() => {
       ref="resizeContainerRef"
       class="resizer-container"
       :style="{
-      width: isMobile ? `100%` : `${resizeContainerWidth}px`,
-      minWidth: `128px`,
-      maxWidth: `1280x`
-    }">
+        width: isMobile ? `100%` : `${resizeContainerWidth}px`,
+        minWidth: `128px`,
+        maxWidth: `1280x`,
+      }"
+    >
       <TreeViewer class="tree-viewer mc-border" v-model="selectedDocumentId" :disable-edit="true" />
-      <div
-        class="resizer"
-        @mousedown.prevent="startResize"
-        v-if="!isMobile"
-      ></div>
+      <div class="resizer" @mousedown.prevent="startResize" v-if="!isMobile"></div>
     </div>
     <div
       class="editor-container"
       :style="{
-        width: isMobile ? '100%' : `calc(100vw - ${resizeContainerWidth}px)`
+        width: isMobile ? '100%' : `calc(100vw - ${resizeContainerWidth}px)`,
       }"
     >
       <div class="document-main-content" id="md-editor">
         <div class="document-main-item-list">
-          <div class="document-title" v-if="selectedDocumentId.trim() !== ''">{{ documentInstance.name }}</div>
+          <div class="document-title" v-if="selectedDocumentId.trim() !== ''">
+            {{ documentInstance.name }}
+          </div>
           <div class="document-desc-item" v-if="selectedDocumentId.trim() !== ''">
             <UserIcon class="document-desc-icon" />
             <span>{{ documentInstance.contributors.join(', ') }}</span>
@@ -171,7 +170,11 @@ onUnmounted(() => {
             <CalendarIcon class="document-desc-icon" />
             <span>{{ documentInstance.updateTime }}</span>
           </div>
-          <div class="document-main-item" v-for="(item, index) in documentInstance.content" :key="index">
+          <div
+            class="document-main-item"
+            v-for="(item, index) in documentInstance.content"
+            :key="index"
+          >
             <MdPreview
               theme="dark"
               language="zh-CN"

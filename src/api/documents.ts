@@ -1,16 +1,16 @@
-import { api, BASE_URL } from "./api";
-import type { NewsSegment } from "./newslist";
+import { api, BASE_URL } from './api'
+import type { NewsSegment } from './newslist'
 
 export interface DocumentNode {
-  parendId: string;
-  id: string;
-  isFolder: boolean;
-  private: boolean;
+  parendId: string
+  id: string
+  isFolder: boolean
+  private: boolean
 
-  name: string;
-  contributors?: string[];
-  content?: NewsSegment[];
-  updateTime?: string;
+  name: string
+  contributors?: string[]
+  content?: NewsSegment[]
+  updateTime?: string
 }
 
 export const DeleteDocument = async (targetId: string): Promise<string | null> => {
@@ -30,11 +30,14 @@ export const DeleteDocument = async (targetId: string): Promise<string | null> =
   return result
 }
 
-export const RebindDocument = async (targetId: string, parentId: string): Promise<string | null> => {
+export const RebindDocument = async (
+  targetId: string,
+  parentId: string,
+): Promise<string | null> => {
   let result: string | null = null
   await api
     .post(`/documents/node/${targetId}`, {
-      parentId: parentId
+      parentId: parentId,
     })
     .then((res) => {
       if (res.data.error) {
@@ -53,7 +56,7 @@ export const RenameDocument = async (targetId: string, name: string): Promise<st
   let result: string | null = null
   await api
     .patch(`/documents/node/${targetId}`, {
-      name: name
+      name: name,
     })
     .then((res) => {
       if (res.data.error) {
@@ -68,12 +71,16 @@ export const RenameDocument = async (targetId: string, name: string): Promise<st
   return result
 }
 
-export const UpdateDocument = async (targetId: string, isPrivate: boolean, content: NewsSegment[]): Promise<string | null> => {
+export const UpdateDocument = async (
+  targetId: string,
+  isPrivate: boolean,
+  content: NewsSegment[],
+): Promise<string | null> => {
   let result: string | null = null
   await api
     .put(`/documents/node/${targetId}`, {
       private: isPrivate,
-      content: content
+      content: content,
     })
     .then((res) => {
       if (res.data.error) {
@@ -89,10 +96,10 @@ export const UpdateDocument = async (targetId: string, isPrivate: boolean, conte
 }
 
 export interface CreateDocumentForm {
-  parentId: string;
-  isFolder: boolean;
-  private: boolean;
-  name: string;
+  parentId: string
+  isFolder: boolean
+  private: boolean
+  name: string
 }
 
 export const CreateDocument = async (form: CreateDocumentForm): Promise<string | null> => {
@@ -111,7 +118,9 @@ export const CreateDocument = async (form: CreateDocumentForm): Promise<string |
 export const GetDocumentLayer = async (parentId: string): Promise<DocumentNode[]> => {
   let result: DocumentNode[] = []
   await api
-    .get(`/documents/layer${(localStorage.getItem('token') || '')?.trim() === '' ? '' : '/private'}/${parentId}`)
+    .get(
+      `/documents/layer${(localStorage.getItem('token') || '')?.trim() === '' ? '' : '/private'}/${parentId}`,
+    )
     .then((res) => {
       result = res.data.children as DocumentNode[]
     })
@@ -122,7 +131,9 @@ export const GetDocumentLayer = async (parentId: string): Promise<DocumentNode[]
 export const GetDocumentDetail = async (targetId: string): Promise<DocumentNode | null> => {
   let result: DocumentNode | null = null
   await api
-    .get(`/documents${(localStorage.getItem('token') || '')?.trim() === '' ? '' : '/private'}/${targetId}`)
+    .get(
+      `/documents${(localStorage.getItem('token') || '')?.trim() === '' ? '' : '/private'}/${targetId}`,
+    )
     .then((res) => {
       result = res.data as DocumentNode
     })
@@ -133,13 +144,17 @@ export const GetDocumentDetail = async (targetId: string): Promise<DocumentNode 
 export const UploadDocumentFile = async (targetId: string, file: File): Promise<string | null> => {
   let result: string | null = null
   await api
-    .post(`/documents/upload/${targetId}`, {
-      file: file
-    }, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+    .post(
+      `/documents/upload/${targetId}`,
+      {
+        file: file,
       },
-    })
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    )
     .then((res) => {
       if (res.data.url) {
         result = BASE_URL + res.data.url

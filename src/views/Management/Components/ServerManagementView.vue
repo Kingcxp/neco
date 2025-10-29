@@ -1,6 +1,12 @@
 <script lang="ts" setup>
 import { onMounted, reactive, ref } from 'vue'
-import { CreateServer, DeleteServer, GetServerList, UpdateServer, type ServerEntity } from '@/api/serverlist'
+import {
+  CreateServer,
+  DeleteServer,
+  GetServerList,
+  UpdateServer,
+  type ServerEntity,
+} from '@/api/serverlist'
 import ListItem from '@/views/List/ListItem.vue'
 import MinecraftButtonClassic from '@/components/utils/MinecraftButtonClassic.vue'
 import MinecraftDialog from '@/components/utils/MinecraftDialog.vue'
@@ -131,7 +137,7 @@ const commitServer = async () => {
 const onNewServer = async () => {
   let serverId: string = localStorage.getItem('serverId') || ''
   if (serverId.trim() === '') {
-    serverId = await CreateServer() || ''
+    serverId = (await CreateServer()) || ''
     if (serverId.trim() === '') {
       toast.error('创建服务器失败！')
       editStatus.value = 'none'
@@ -286,11 +292,7 @@ onMounted(async () => {
     </div>
     <div class="server-input-item">
       <text class="server-input-label">名称</text>
-      <MinecraftInput
-        class="server-input"
-        v-model="server.name"
-        placeholder="请输入服务器名称"
-      />
+      <MinecraftInput class="server-input" v-model="server.name" placeholder="请输入服务器名称" />
     </div>
     <div class="server-input-item">
       <text class="server-input-label">简介</text>
@@ -319,11 +321,7 @@ onMounted(async () => {
     </div>
     <div class="server-input-item">
       <text class="server-input-label">服务器地址</text>
-      <MinecraftInput
-        class="server-input"
-        v-model="server.serverUrl"
-        placeholder="没有可留空"
-      />
+      <MinecraftInput class="server-input" v-model="server.serverUrl" placeholder="没有可留空" />
     </div>
     <MinecraftButtonClassic @click="commitServer">保存</MinecraftButtonClassic>
   </form>

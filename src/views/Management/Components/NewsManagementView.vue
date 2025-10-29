@@ -165,8 +165,8 @@ const toContent = () => {
     return
   }
 
-  const pdfKeysEscaped = newsPdfFiles.value.map(key =>
-    formatPdf(key).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pdfKeysEscaped = newsPdfFiles.value.map((key) =>
+    formatPdf(key).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
   )
 
   const regex = new RegExp(`(${pdfKeysEscaped.join('|')})`, 'g')
@@ -587,11 +587,25 @@ const onUploadImg = async (
     </div>
     <div class="news-input-item">
       <text class="news-input-label">{{ newsType === 'activity' ? '开始' : '' }}时间</text>
-      <Datepicker v-model="newsDate" model-type="format" format="yyyy-MM-dd" dark :clearable="false" auto-apply />
+      <Datepicker
+        v-model="newsDate"
+        model-type="format"
+        format="yyyy-MM-dd"
+        dark
+        :clearable="false"
+        auto-apply
+      />
     </div>
     <div class="news-input-item" v-if="newsType === 'activity'">
       <text class="news-input-label">结束时间</text>
-      <Datepicker v-model="newsEndDate" model-type="format" format="yyyy-MM-dd" dark :clearable="false" auto-apply />
+      <Datepicker
+        v-model="newsEndDate"
+        model-type="format"
+        format="yyyy-MM-dd"
+        dark
+        :clearable="false"
+        auto-apply
+      />
     </div>
     <div class="news-input-item">
       <text class="news-input-label">正文</text>

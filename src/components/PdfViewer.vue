@@ -4,8 +4,8 @@ import { computed } from 'vue'
 const props = defineProps({
   pdfUrl: {
     type: String,
-    required: true
-  }
+    required: true,
+  },
 })
 
 const viewerUrl = computed(() => {

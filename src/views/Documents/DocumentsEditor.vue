@@ -1,5 +1,10 @@
 <script lang="ts" setup>
-import { DeleteDocumentFile, GetDocumentDetail, UpdateDocument, UploadDocumentFile } from '@/api/documents'
+import {
+  DeleteDocumentFile,
+  GetDocumentDetail,
+  UpdateDocument,
+  UploadDocumentFile,
+} from '@/api/documents'
 import type { NewsSegment } from '@/api/newslist'
 import TreeViewer from '@/components/documents/TreeViewer.vue'
 import CalendarIcon from '@/components/icons/CalendarIcon.vue'
@@ -11,7 +16,13 @@ import MinecraftButton from '@/components/utils/MinecraftButton.vue'
 import MinecraftButtonClassic from '@/components/utils/MinecraftButtonClassic.vue'
 import MinecraftDialog from '@/components/utils/MinecraftDialog.vue'
 import MinecraftInput from '@/components/utils/MinecraftInput.vue'
-import { MdEditor, MdPreview, NormalToolbar, type ExposeParam, type ToolbarNames } from 'md-editor-v3'
+import {
+  MdEditor,
+  MdPreview,
+  NormalToolbar,
+  type ExposeParam,
+  type ToolbarNames,
+} from 'md-editor-v3'
 import { onMounted, onUnmounted, reactive, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
@@ -95,7 +106,7 @@ const startResize = (event: MouseEvent) => {
   isResizing = true
 
   startX = event.clientX
-  startWidth = resizeContainerRef.value.offsetWidth;
+  startWidth = resizeContainerRef.value.offsetWidth
 
   document.addEventListener('mousemove', handleMouseMove)
   document.addEventListener('mouseup', stopResize)
@@ -281,11 +292,11 @@ const toContent = () => {
       result.push({ type: 'markdown', content: curText })
     }
     documentInstance.content = result
-    return;
+    return
   }
 
-  const pdfKeysEscaped = documentPdfFiles.value.map(key =>
-    formatPdf(key).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pdfKeysEscaped = documentPdfFiles.value.map((key) =>
+    formatPdf(key).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
   )
 
   const regex = new RegExp(`(${pdfKeysEscaped.join('|')})`, 'g')
@@ -367,7 +378,7 @@ const commitDocument = async () => {
   const result = await UpdateDocument(
     selectedDocumentId.value,
     documentInstance.private,
-    documentInstance.content
+    documentInstance.content,
   )
   if (!result) {
     toast.success('更新文档成功！')
@@ -414,27 +425,21 @@ onUnmounted(() => {
       ref="resizeContainerRef"
       class="resizer-container"
       :style="{
-      width: isMobile ? `100%` : `${resizeContainerWidth}px`,
-      minWidth: `128px`,
-      maxWidth: `1280x`
-    }">
+        width: isMobile ? `100%` : `${resizeContainerWidth}px`,
+        minWidth: `128px`,
+        maxWidth: `1280x`,
+      }"
+    >
       <TreeViewer class="tree-viewer mc-border" v-model="selectedDocumentId" />
-      <div
-        class="resizer"
-        @mousedown.prevent="startResize"
-        v-if="!isMobile"
-      ></div>
-      <MinecraftButton
-        class="back-btn"
-        @click="router.push('/management/document')"
-      >
-        <text style="font-size: 2rem;">← </text>回到后台
+      <div class="resizer" @mousedown.prevent="startResize" v-if="!isMobile"></div>
+      <MinecraftButton class="back-btn" @click="router.push('/management/document')">
+        <text style="font-size: 2rem">← </text>回到后台
       </MinecraftButton>
     </div>
     <div
       class="editor-container"
       :style="{
-        width: isMobile ? '100%' : `calc(100vw - ${resizeContainerWidth}px)`
+        width: isMobile ? '100%' : `calc(100vw - ${resizeContainerWidth}px)`,
       }"
     >
       <MdEditor
@@ -463,7 +468,9 @@ onUnmounted(() => {
       </MdEditor>
       <div class="document-main-content" v-show="documentInstance.preview">
         <div class="document-main-item-list">
-          <div class="document-title" v-if="selectedDocumentId.trim() !== ''">{{ documentInstance.name }}</div>
+          <div class="document-title" v-if="selectedDocumentId.trim() !== ''">
+            {{ documentInstance.name }}
+          </div>
           <div class="document-desc-item" v-if="selectedDocumentId.trim() !== ''">
             <UserIcon class="document-desc-icon" />
             <span>{{ documentInstance.contributors.join(', ') }}</span>
@@ -472,7 +479,11 @@ onUnmounted(() => {
             <CalendarIcon class="document-desc-icon" />
             <span>{{ documentInstance.updateTime }}</span>
           </div>
-          <div class="document-main-item" v-for="(item, index) in documentInstance.content" :key="index">
+          <div
+            class="document-main-item"
+            v-for="(item, index) in documentInstance.content"
+            :key="index"
+          >
             <MdPreview
               theme="dark"
               language="zh-CN"
@@ -500,17 +511,12 @@ onUnmounted(() => {
         <MinecraftButton
           class="editor-btn"
           @click="documentInstance.private = !documentInstance.private"
-        >可见性：{{ documentInstance.private ? '私有' : '公开' }}
+          >可见性：{{ documentInstance.private ? '私有' : '公开' }}
         </MinecraftButton>
-        <MinecraftButton
-          class="editor-btn"
-          @click="onPreviewClick"
-        >预览：{{ documentInstance.preview ? '开启' : '关闭' }}
+        <MinecraftButton class="editor-btn" @click="onPreviewClick"
+          >预览：{{ documentInstance.preview ? '开启' : '关闭' }}
         </MinecraftButton>
-        <MinecraftButton
-          class="editor-btn last"
-          @click="commitDocument"
-        >保存</MinecraftButton>
+        <MinecraftButton class="editor-btn last" @click="commitDocument">保存</MinecraftButton>
       </div>
     </div>
   </div>

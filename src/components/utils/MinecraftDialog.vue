@@ -16,7 +16,7 @@ const props = defineProps({
   confirmText: {
     type: String,
     default: '确定',
-  }
+  },
 })
 const visible = ref(false)
 const opacity = ref(0)
@@ -66,9 +66,9 @@ onMounted(() => {
       <slot></slot>
       <slot name="footer">
         <div class="dialog-footer">
-          <MinecraftButtonClassic class="dialog-footer-btn" @click="closeDialog"
-            >{{ props.cancelText }}</MinecraftButtonClassic
-          >
+          <MinecraftButtonClassic class="dialog-footer-btn" @click="closeDialog">{{
+            props.cancelText
+          }}</MinecraftButtonClassic>
           <MinecraftButtonClassic
             class="dialog-footer-btn"
             style="margin-left: 1rem"

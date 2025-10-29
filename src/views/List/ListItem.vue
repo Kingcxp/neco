@@ -25,7 +25,7 @@ const props = defineProps({
   withDelete: {
     type: Boolean,
     default: false,
-  }
+  },
 })
 
 const server = defineModel('server', {
@@ -55,9 +55,20 @@ onMounted(async () => {
       @click="copy(server.serverUrl || '')"
     />
     <div class="item-info">
-      <span style="color: white; line-height: 1.1rem; font-size: 1.1rem; margin-bottom: 5px; margin-top: 4px;">{{ server.name }}</span>
-      <span style="line-height: 1rem; margin-bottom: 3px;">{{ server.description }}</span>
-      <span style="line-height: 1rem; color: var(--minecraft-green-light);">{{ server.status?.version }}</span>
+      <span
+        style="
+          color: white;
+          line-height: 1.1rem;
+          font-size: 1.1rem;
+          margin-bottom: 5px;
+          margin-top: 4px;
+        "
+        >{{ server.name }}</span
+      >
+      <span style="line-height: 1rem; margin-bottom: 3px">{{ server.description }}</span>
+      <span style="line-height: 1rem; color: var(--minecraft-green-light)">{{
+        server.status?.version
+      }}</span>
     </div>
     <div class="item-status">
       <span class="server-status">
@@ -66,15 +77,9 @@ onMounted(async () => {
         >
         <img class="status-img" :src="props.pingIcon" alt="pingIcon" />
       </span>
-      <span style="margin-top: auto; display: flex; align-items: center; justify-content: center;">
-        <a v-if="server.onlineMapUrl.trim() != ''" :href="server.onlineMapUrl"
-          >网页地图</a
-        >
-        <DeleteIcon
-          class="delete-icon"
-          v-if="props.withDelete"
-          @click="emit('delete')"
-        />
+      <span style="margin-top: auto; display: flex; align-items: center; justify-content: center">
+        <a v-if="server.onlineMapUrl.trim() != ''" :href="server.onlineMapUrl">网页地图</a>
+        <DeleteIcon class="delete-icon" v-if="props.withDelete" @click="emit('delete')" />
       </span>
     </div>
   </div>

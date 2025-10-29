@@ -15,7 +15,8 @@ export const GetLinkList = (): LinkEntity[] => {
     },
     {
       name: 'bilibili',
-      image: 'https://www.mualliance.cn/wp-content/uploads/2023/01/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6.png',
+      image:
+        'https://www.mualliance.cn/wp-content/uploads/2023/01/%E5%8D%97%E4%BA%AC%E5%A4%A7%E5%AD%A6.png',
       url: 'https://space.bilibili.com/646892894',
       description: '来 Bilibili 关注社团的最新动态！',
     },

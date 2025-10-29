@@ -36,7 +36,7 @@ export const GetServerStatus = async (url: string): Promise<ServerStatus | null>
   let result: ServerStatus | null = null
   await api
     .post('/server/status', {
-      serverUrl: url
+      serverUrl: url,
     })
     .then((res) => {
       result = res.data as ServerStatus
