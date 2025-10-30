@@ -28,7 +28,13 @@
 * {
   box-sizing: border-box;
   font-family:
-    'Ark Latin', 'Minecraft_AE', 'Cubic 11', system-ui, Avenir, Helvetica, Arial, sans-serif !important;
+    'Ark Latin' /*, 'Minecraft_AE'*/,
+    'Cubic 11',
+    system-ui,
+    Avenir,
+    Helvetica,
+    Arial,
+    sans-serif !important;
   font-smooth: never;
   -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: none;
@@ -36,7 +42,13 @@
 
 .title-font {
   font-family:
-    'Minecraft-Tenv2', 'Ark Latin', 'Minecraft_AE', 'Cubic 11', system-ui, Avenir, Helvetica, Arial,
+    'Minecraft-Tenv2',
+    'Ark Latin' /*, 'Minecraft_AE'*/,
+    'Cubic 11',
+    system-ui,
+    Avenir,
+    Helvetica,
+    Arial,
     sans-serif !important;
   margin: 0 4px;
 }

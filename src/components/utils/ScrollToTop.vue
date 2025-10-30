@@ -24,7 +24,7 @@ window.addEventListener('scroll', () => {
 
 <style lang="css" scoped>
 .scroll-to-top {
-  font-size: 3rem;
+  font-size: 1.5rem;
   position: fixed;
   height: 3rem;
   width: 3rem;

@@ -433,7 +433,7 @@ onUnmounted(() => {
       <TreeViewer class="tree-viewer mc-border" v-model="selectedDocumentId" />
       <div class="resizer" @mousedown.prevent="startResize" v-if="!isMobile"></div>
       <MinecraftButton class="back-btn" @click="router.push('/management/document')">
-        <text style="font-size: 2rem">← </text>回到后台
+        ← 回到后台
       </MinecraftButton>
     </div>
     <div
@@ -532,8 +532,8 @@ onUnmounted(() => {
     </div>
     <div class="pdf-options-container">
       <text class="pdf-options-label">直接上传</text>
-      <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectPdf"
-        ><span style="font-size: 2rem">↑</span> 点击上传</MinecraftButtonClassic
+      <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectPdf">
+        ↑ 点击上传</MinecraftButtonClassic
       >
     </div>
     <template v-slot:footer>

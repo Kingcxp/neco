@@ -597,8 +597,9 @@ onMounted(async () => {
         class="avatar-options-button"
         style="width: 10rem"
         @click="onSelectAvatar"
-        ><span style="font-size: 2rem">↑</span> 点击上传</MinecraftButtonClassic
       >
+        ↑ 点击上传
+      </MinecraftButtonClassic>
     </div>
     <template v-slot:footer>
       <span></span>

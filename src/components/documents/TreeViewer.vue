@@ -340,7 +340,11 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
     style="user-select: none"
     @contextmenu.stop="onFolderMenu($event, true)"
   >
-    <details class="document" @contextmenu.stop="onFolderMenu($event, false)">
+    <details
+      class="document"
+      @contextmenu.stop="onFolderMenu($event, false)"
+      v-if="name !== 'root'"
+    >
       <summary
         :draggable="props.disableEdit ? 'false' : 'true'"
         @dragstart="onFolderDrag"
@@ -385,6 +389,39 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         </details>
       </div>
     </details>
+    <div v-else>
+      <div v-for="child in children" :key="child.id">
+        <TreeViewer
+          v-if="child.isFolder"
+          :parent-id="child.id"
+          v-model:name="child.name"
+          :id="child.id"
+          :layer="props.layer + 1"
+          v-model="selectedId"
+          :disable-edit="props.disableEdit"
+        />
+        <details
+          :id="`file-${child.id}`"
+          class="document"
+          @contextmenu.stop="onDocumentMenu($event, child.name, child.id)"
+          @click="selectedId = child.id"
+          v-else
+        >
+          <summary
+            :draggable="props.disableEdit ? 'false' : 'true'"
+            @dragstart="onDocumentDrag($event, child.id)"
+            class="document-name file"
+            :style="{
+              '--prefix': `${(layer + 2) * 0.8}rem`,
+              '--bg-color': `${selectedId === child.id ? 'black' : 'rgba(0, 0, 0, 0.5)'}`,
+              '--display': `${selectedId === child.id ? 'block' : 'none'}`,
+            }"
+          >
+            <span style="z-index: 4">{{ child.name }}</span>
+          </summary>
+        </details>
+      </div>
+    </div>
     <div
       ref="folderMenuRef"
       class="document-menu mc-border"
@@ -422,16 +459,10 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         left: `${menuX}px`,
       }"
     >
-      <MinecraftButton
-        v-if="!isGlobal && props.parentId !== 'root'"
-        class="document-menu-btn"
-        @click.stop="onRenameDocument"
+      <MinecraftButton class="document-menu-btn" @click.stop="onRenameDocument"
         >重命名</MinecraftButton
       >
-      <MinecraftButton
-        v-if="!isGlobal && props.parentId !== 'root'"
-        class="document-menu-btn"
-        @click.stop="onDeleteDocument"
+      <MinecraftButton class="document-menu-btn" @click.stop="onDeleteDocument"
         >删除</MinecraftButton
       >
     </div>

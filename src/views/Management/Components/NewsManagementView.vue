@@ -693,9 +693,9 @@ const onUploadImg = async (
     </div>
     <div class="pdf-options-container">
       <text class="pdf-options-label">直接上传</text>
-      <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectPdf"
-        ><span style="font-size: 2rem">↑</span> 点击上传</MinecraftButtonClassic
-      >
+      <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectPdf">
+        ↑ 点击上传
+      </MinecraftButtonClassic>
     </div>
     <template v-slot:footer>
       <span></span>
@@ -713,9 +713,13 @@ const onUploadImg = async (
     </div>
     <div class="pdf-options-container">
       <text class="pdf-options-label">直接上传</text>
-      <MinecraftButtonClassic class="pdf-options-button" style="width: 10rem" @click="onSelectImage"
-        ><span style="font-size: 2rem">↑</span> 点击上传</MinecraftButtonClassic
+      <MinecraftButtonClassic
+        class="pdf-options-button"
+        style="width: 10rem"
+        @click="onSelectImage"
       >
+        ↑ 点击上传
+      </MinecraftButtonClassic>
     </div>
     <template v-slot:footer>
       <span></span>

@@ -339,9 +339,13 @@ onMounted(async () => {
     </div>
     <div class="icon-options-container">
       <text class="icon-options-label">直接上传</text>
-      <MinecraftButtonClassic class="icon-options-button" style="width: 10rem" @click="onSelectIcon"
-        ><span style="font-size: 2rem">↑</span> 点击上传</MinecraftButtonClassic
+      <MinecraftButtonClassic
+        class="icon-options-button"
+        style="width: 10rem"
+        @click="onSelectIcon"
       >
+        ↑ 点击上传
+      </MinecraftButtonClassic>
     </div>
     <template v-slot:footer>
       <span></span>
