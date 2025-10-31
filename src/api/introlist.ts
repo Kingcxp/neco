@@ -83,18 +83,18 @@ export const GetDetailedIntroList = (): IntroEntity[] => {
     },
     {
       title: `宣传美工部-文案组`,
-      description: `分享快乐，记录生活，NMO出品，必属精品。社团大事、服务器新闻、自由创作甚至AIGC，都欢迎投稿，让你的精彩被更多人发现！前往社刊页面即可投稿！（但是这个功能还没做😭）`,
-      image: import.meta.env.BASE_URL + `background/main-background.jpg`,
+      description: `分享快乐，记录生活，NMO出品，必属精品。社团大事、服务器新闻、自由创作甚至AIGC，都欢迎投稿，让你的精彩被更多人发现！`,
+      image: import.meta.env.BASE_URL + `background/list-background.jpg`,
     },
     {
       title: `宣传美工部-动画组`,
-      description: `让Minecraft的世界“生”“动”起来！NMO动画组是MUA各高校最大的Minecraft动画交流组织。精美场景渲染、超酷动画制作、相关软件教学。还有定期的“你画我猜”与贺图互换活动哦。详479223524。`,
+      description: `让Minecraft的世界“生”“动”起来！NMO动画组是MUA各高校最大的Minecraft动画交流组织。精美场景渲染、超酷动画制作、相关软件教学。还有定期的“你画我猜”与贺图互换活动哦。`,
       image: import.meta.env.BASE_URL + 'resources/groups/动画组.jpg',
     },
     {
       title: `运维保障部`,
-      description: `这里聚集了NMO的技术人员，是服务器、皮肤站和社团各网站稳定运行的幕后英雄。LINUX服务器操作，数据包、插件、模组编写，网站维护，服务端组装与维护，欢迎大佬的同时也对零基础萌新敞开大门。超浓厚的学习交流氛围！还有群友交流女装、音游和硬件哦~(bushi)`,
-      image: import.meta.env.BASE_URL + 'background/list-background.jpg',
+      description: `这里聚集了NMO的技术人员，是服务器、皮肤站和社团各网站稳定运行的幕后英雄。软件，硬件，一应俱全。Linux服务器操作，数据包、插件、模组编写，网站设计与维护，服务端组装与维护，欢迎大佬的同时也对零基础萌新敞开大门。`,
+      image: import.meta.env.BASE_URL + 'resources/groups/技术部.png',
     },
     {
       title: `外联部`,
