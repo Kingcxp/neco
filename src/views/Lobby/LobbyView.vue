@@ -8,7 +8,7 @@ import Intro from './IntroView.vue'
       <div class="logo-area">
         <div class="logo-content">
           <div>
-            <img src="/nmo-logo-large.png" alt="LOGO" style="height: 5rem" />
+            <img src="/nmo-logo-large.png" alt="LOGO" style="user-select: none; height: 5rem" />
           </div>
           <p>南京大学<span class="title-font">Minecraft</span>协会</p>
           <span class="intro-text"
@@ -44,7 +44,7 @@ import Intro from './IntroView.vue'
   left: 0;
   right: 0;
   height: 5rem;
-  background: linear-gradient(to bottom, transparent 0%, var(--background-color) 100%);
+  /* background: linear-gradient(to bottom, transparent 0%, var(--background-color) 100%); */
 }
 
 .logo-area {
@@ -53,7 +53,6 @@ import Intro from './IntroView.vue'
   min-width: 25rem;
   display: flex;
   align-items: center;
-
 }
 
 .logo-content {
@@ -63,7 +62,12 @@ import Intro from './IntroView.vue'
   padding-left: 10%;
   max-width: 30rem;
   padding-right: 10%;
-  animation: fade-in-right 1s ease-out forwards;
+  /* animation: fade-in-right 1s ease-out forwards; */
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+  padding: 1rem;
+  height: 100%;
+  justify-content: center;
 }
 
 .logo-content p {

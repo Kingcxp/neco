@@ -22,7 +22,7 @@ const props = defineProps({
       </div>
     </div>
     <div v-else :class="!right ? 'intro-right' : 'intro-left'">
-      <img :src="props.intro.image" alt="image" class="intro-image" />
+      <img :src="props.intro.image" alt="image" class="intro-image mc-border" />
       <div class="intro-text">
         <p>{{ props.intro.title }}</p>
         <span>{{ props.intro.description }}</span>
@@ -74,13 +74,13 @@ const props = defineProps({
 .intro-left .intro-text {
   text-align: left;
   opacity: 0;
-  animation: fade-in-right 1s ease-out 1s forwards;
+  animation: fade-in-right 1s ease-out 0.5s forwards;
 }
 
 .intro-right .intro-text {
   text-align: right;
   opacity: 0;
-  animation: fade-in-left 1s ease-out 1s forwards;
+  animation: fade-in-left 1s ease-out 0.5s forwards;
 }
 
 .intro-text p {
@@ -104,11 +104,11 @@ const props = defineProps({
 
 .intro-left .intro-image {
   opacity: 0;
-  animation: fade-in-left 1s ease-out 1s forwards;
+  animation: fade-in-left 1s ease-out 0.5s forwards;
 }
 
 .intro-right .intro-image {
   opacity: 0;
-  animation: fade-in-right 1s ease-out 1s forwards;
+  animation: fade-in-right 1s ease-out 0.5s forwards;
 }
 </style>
