@@ -106,6 +106,9 @@ onMounted(() => {
   position: relative;
   flex: 1;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 10px;
   cursor: pointer;
   z-index: 1;
