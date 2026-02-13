@@ -450,19 +450,21 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         left: `${menuX}px`,
       }"
     >
-      <MinecraftButton class="document-menu-btn" @click.stop="onNewDocument"
+      <MinecraftButton :dark="true" class="document-menu-btn" @click.stop="onNewDocument"
         >新建文档</MinecraftButton
       >
-      <MinecraftButton class="document-menu-btn" @click.stop="onNewFolder"
+      <MinecraftButton :dark="true" class="document-menu-btn" @click.stop="onNewFolder"
         >新建文件夹</MinecraftButton
       >
       <MinecraftButton
+        :dark="true"
         v-if="!isGlobal && props.parentId !== 'root'"
         class="document-menu-btn"
         @click.stop="onRenameFolder"
         >重命名</MinecraftButton
       >
       <MinecraftButton
+        :dark="true"
         v-if="!isGlobal && props.parentId !== 'root'"
         class="document-menu-btn"
         @click.stop="onDeleteFolder"
@@ -478,10 +480,10 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         left: `${menuX}px`,
       }"
     >
-      <MinecraftButton class="document-menu-btn" @click.stop="onRenameDocument"
+      <MinecraftButton :dark="true" class="document-menu-btn" @click.stop="onRenameDocument"
         >重命名</MinecraftButton
       >
-      <MinecraftButton class="document-menu-btn" @click.stop="onDeleteDocument"
+      <MinecraftButton :dark="true" class="document-menu-btn" @click.stop="onDeleteDocument"
         >删除</MinecraftButton
       >
     </div>
