@@ -435,7 +435,7 @@ const scrollElement = document.documentElement
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: calc(100vh - 5rem);
+  min-height: 100vh;
 }
 
 .document-main-item-list {
@@ -445,7 +445,7 @@ const scrollElement = document.documentElement
   height: max-content;
   padding: 1rem 4rem;
   padding-bottom: 2rem;
-  min-height: calc(100vh - 5rem);
+  min-height: 100vh;
 
   backdrop-filter: blur(10px);
   background-color: rgba(0, 0, 0, 0.3);
