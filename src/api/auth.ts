@@ -18,7 +18,7 @@ export interface UserEntity {
 
 export type UserStatus = 'alive' | 'dead' | 'unknown'
 
-export const LoginStatus = async (): Promise<string> => {
+export const LoginStatus = async (): Promise<UserStatus> => {
   let result: UserStatus = 'unknown'
   await api
     .get(`/auth/status`)

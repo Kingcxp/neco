@@ -55,7 +55,12 @@ export const GetNews = async (
       pin: false,
     })
     .then((res) => {
-      result = res.data.list as Array<NewsEntity>
+      result = (res.data.list as Array<NewsEntity>).sort((lhs, rhs) => {
+        if (lhs.endDate && rhs.endDate) {
+          return rhs.endDate.localeCompare(lhs.endDate)
+        }
+        return rhs.date.localeCompare(lhs.date)
+      })
     })
     .catch(() => {})
   return result

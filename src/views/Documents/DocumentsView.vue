@@ -89,7 +89,6 @@ onUnmounted(() => {
 const selectedDocumentId = ref('')
 
 watch(selectedDocumentId, async (newVal) => {
-  scrollTo('md-editor')
   const result = await GetDocumentDetail(newVal)
   if (result) {
     documentInstance.private = result.private
@@ -120,7 +119,66 @@ const onResize = () => {
   }
 }
 
+const bgCount = 62
+let box: HTMLElement | null = null
+const pool: Array<string> = []
+const stayTime = 8000
+const fadeTime = 400
+const unloadedImages: Array<string> = []
+
+const preloadImage = async (url: string) => {
+  if (unloadedImages.includes(url)) {
+    unloadedImages.splice(unloadedImages.indexOf(url), 1)
+  } else {
+    return
+  }
+  const promise = new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = resolve
+    img.onerror = reject
+    img.src = url
+  })
+  await promise
+}
+
+const nextBg = (first: boolean = false) => {
+  if (box == null) {
+    return
+  }
+  if (pool.length === 0) {
+    for (let i = 1; i <= bgCount; i++) {
+      pool.push(import.meta.env.BASE_URL + `mc自然风景背景图-air/${i}.jpg`)
+    }
+  }
+
+  const idx = Math.floor(Math.random() * pool.length)
+  const url = pool.splice(idx, 1)[0]
+  preloadImage(url)
+
+  box.style.opacity = '0'
+  if (first) {
+    box.style.backgroundImage = `url(${url})`
+    box.style.opacity = '1'
+  }
+  setTimeout(() => {
+    if (box == null) {
+      return
+    }
+    box.style.backgroundImage = `url(${url})`
+    box.style.opacity = '1'
+
+    setTimeout(nextBg, stayTime + fadeTime)
+  }, fadeTime)
+}
+
 onMounted(() => {
+  // 背景轮播
+  box = document.getElementById('documents-bg')
+  for (let i = 1; i <= bgCount; i++) {
+    unloadedImages.push(import.meta.env.BASE_URL + `mc自然风景背景图-air/${i}.jpg`)
+  }
+  nextBg(true)
+
   if (window.innerWidth < 768) {
     isMobile.value = true
   }
@@ -135,72 +193,80 @@ const scrollElement = document.documentElement
 </script>
 
 <template>
+  <div id="documents-bg"></div>
+  <div class="navbar-cover"></div>
   <div
     class="documents-editor"
     :style="{
       flexDirection: isMobile ? `column` : `row`,
     }"
   >
-    <div
-      ref="resizeContainerRef"
-      class="resizer-container"
-      :style="{
-        width: isMobile ? `100%` : `${resizeContainerWidth}px`,
-        minWidth: `128px`,
-        maxWidth: `1280x`,
-      }"
-    >
-      <TreeViewer class="tree-viewer mc-border" v-model="selectedDocumentId" :disable-edit="true" />
-      <div class="resizer" @mousedown.prevent="startResize" v-if="!isMobile"></div>
-    </div>
-    <div
-      class="editor-container"
-      :style="{
-        width: isMobile ? '100%' : `calc(100vw - ${resizeContainerWidth}px)`,
-      }"
-    >
-      <div class="document-main-content" id="md-editor">
-        <div class="document-main-item-list">
-          <div class="document-title" v-if="selectedDocumentId.trim() !== ''">
-            {{ documentInstance.name }}
-          </div>
-          <div class="document-desc-item" v-if="selectedDocumentId.trim() !== ''">
-            <UserIcon class="document-desc-icon" />
-            <span>{{ documentInstance.contributors.join(', ') }}</span>
-          </div>
-          <div class="document-desc-item" v-if="selectedDocumentId.trim() !== ''">
-            <CalendarIcon class="document-desc-icon" />
-            <span>{{ documentInstance.updateTime }}</span>
-          </div>
-          <div
-            class="document-main-item"
-            v-for="(item, index) in documentInstance.content"
-            :key="index"
-          >
-            <div class="document-preview">
-              <MdPreview
-                :id="`md-preview-${index}`"
-                theme="dark"
-                language="zh-CN"
-                preview-theme="minecraft"
-                :model-value="item.content"
-                @on-remount="mountSounds"
-                v-if="item.type === 'markdown'"
-              />
-              <MdCatalog :editor-id="`md-preview-${index}`" :scroll-element="scrollElement" />
+    <div class="documents-editor-container">
+      <div
+        ref="resizeContainerRef"
+        class="resizer-container"
+        :style="{
+          width: isMobile ? `100%` : `${resizeContainerWidth}px`,
+          minWidth: `128px`,
+          maxWidth: `1280x`,
+        }"
+      >
+        <TreeViewer class="tree-viewer" v-model="selectedDocumentId" :disable-edit="true" />
+        <div class="resizer" @mousedown.prevent="startResize" v-if="!isMobile"></div>
+      </div>
+      <div
+        class="editor-container"
+        :style="{
+          width: isMobile ? '100%' : `calc(100vw - ${resizeContainerWidth}px)`,
+        }"
+      >
+        <div class="document-main-content" id="md-editor">
+          <div class="document-main-item-list">
+            <div class="document-title" v-if="selectedDocumentId.trim() !== ''">
+              {{ documentInstance.name }}
             </div>
-            <MinecraftButton
-              v-if="item.type === 'pdf_file'"
-              class="pdf-read-btn"
-              @click="scrollTo(`pdf-renderer-${index}`)"
-              >↓ 最佳阅读位置</MinecraftButton
+            <div class="document-desc-item" v-if="selectedDocumentId.trim() !== ''">
+              <UserIcon class="document-desc-icon" />
+              <span>{{ documentInstance.contributors.join(', ') }}</span>
+            </div>
+            <div class="document-desc-item" v-if="selectedDocumentId.trim() !== ''">
+              <CalendarIcon class="document-desc-icon" />
+              <span>{{ documentInstance.updateTime }}</span>
+            </div>
+            <div
+              class="document-main-item"
+              v-for="(item, index) in documentInstance.content"
+              :key="index"
             >
-            <PdfViewer
-              :id="`pdf-renderer-${index}`"
-              v-if="item.type === 'pdf_file'"
-              class="pdf-renderer mc-border"
-              :pdf-url="item.content"
-            />
+              <div class="document-preview">
+                <MdPreview
+                  :id="`md-preview-${index}`"
+                  theme="dark"
+                  language="zh-CN"
+                  preview-theme="minecraft"
+                  :model-value="item.content"
+                  @on-remount="mountSounds"
+                  v-if="item.type === 'markdown'"
+                />
+                <MdCatalog
+                  class="document-preview-catalog"
+                  :editor-id="`md-preview-${index}`"
+                  :scroll-element="scrollElement"
+                />
+              </div>
+              <MinecraftButton
+                v-if="item.type === 'pdf_file'"
+                class="pdf-read-btn"
+                @click="scrollTo(`pdf-renderer-${index}`)"
+                >↓ 最佳阅读位置</MinecraftButton
+              >
+              <PdfViewer
+                :id="`pdf-renderer-${index}`"
+                v-if="item.type === 'pdf_file'"
+                class="pdf-renderer mc-border"
+                :pdf-url="item.content"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -209,12 +275,50 @@ const scrollElement = document.documentElement
 </template>
 
 <style lang="css" scoped>
+#documents-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+
+  background-size: cover;
+  background-position: center;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.navbar-cover {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 5rem;
+  width: 100vw;
+  z-index: -1;
+
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.5) 50%,
+    rgba(0, 0, 0, 0.7) 100%
+  );
+}
+
 .documents-editor {
   display: flex;
   width: 100vw;
   min-height: 100vh;
-  overflow: hidden;
   padding-top: 5rem;
+}
+
+.documents-editor-container {
+  display: flex;
+  width: 100vw;
+  min-height: calc(100vh - 5rem);
+  padding: 0 4rem;
+  padding-bottom: 2rem;
+
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .tree-viewer {
@@ -222,12 +326,20 @@ const scrollElement = document.documentElement
   width: 100%;
   overflow: auto;
   padding: 0.8rem;
-  padding-left: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 4px solid #222222;
+  box-shadow:
+    inset -4px -4px 0px 0px #3a3a3a,
+    inset 4px 4px 0px 0px #6b6b6b;
+  background-color: #111111;
 }
 
 .resizer-container {
-  position: relative;
-  height: calc(100vh - 5rem);
+  position: sticky;
+  top: 0;
+  left: 0;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -324,14 +436,9 @@ const scrollElement = document.documentElement
   flex-direction: column;
   width: 100%;
   min-height: calc(100vh - 5rem);
-
-  background:
-    linear-gradient(to right, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.4)),
-    radial-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)), url('/blockbg/dirt.png');
 }
 
 .document-main-item-list {
-  background-color: rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -339,6 +446,13 @@ const scrollElement = document.documentElement
   padding: 1rem 4rem;
   padding-bottom: 2rem;
   min-height: calc(100vh - 5rem);
+
+  backdrop-filter: blur(10px);
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 4px solid #222222;
+  box-shadow:
+    inset -4px -4px 0px 0px #3a3a3a,
+    inset 4px 4px 0px 0px #6b6b6b;
 }
 
 .document-main-item {
@@ -362,6 +476,11 @@ const scrollElement = document.documentElement
   height: 1rem;
 }
 
+.document-preview-catalog {
+  min-width: 20%;
+  height: min-content;
+}
+
 .document-preview {
   display: flex;
   justify-content: space-between;
@@ -374,6 +493,46 @@ const scrollElement = document.documentElement
     flex-direction: column-reverse;
     align-items: center;
     justify-content: center;
+  }
+
+  .documents-editor-container {
+    flex-direction: column;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .resizer-container {
+    position: relative;
+    height: 50vh;
+  }
+
+  .document-preview-catalog {
+    width: 100%;
+    border-bottom: 2px solid #909399;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+</style>
+
+<style lang="css">
+.md-editor-catalog-container {
+  padding-left: 2rem;
+  border-left: 2px solid #909399;
+}
+
+.md-editor-catalog-indicator {
+  transform: translateX(2rem);
+}
+
+@media screen and (max-width: 768px) {
+  .md-editor-catalog-container {
+    padding-left: 2rem;
+    border-left: none;
+  }
+
+  .md-editor-catalog-indicator {
+    transform: translateX(2rem);
   }
 }
 </style>

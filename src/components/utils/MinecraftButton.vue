@@ -1,4 +1,11 @@
 <script lang="ts" setup>
+const props = defineProps({
+  dark: {
+    type: Boolean,
+    default: false,
+  },
+})
+
 const soundOn = () => {
   const audio = new Audio('/button.click.ogg')
   audio.play()
@@ -7,7 +14,7 @@ const soundOn = () => {
 </script>
 
 <template>
-  <div class="minecraft-button" :onclick="soundOn">
+  <div :class="props.dark ? 'minecraft-button dark' : 'minecraft-button'" :onclick="soundOn">
     <slot></slot>
   </div>
 </template>
@@ -25,6 +32,13 @@ const soundOn = () => {
   background-color: #c6c6c6;
   border-image: url('/UI/button_normal.png') 1;
   cursor: pointer;
+}
+
+.minecraft-button.dark {
+  color: #fff;
+  outline: 2px solid #333;
+  background-color: #303030;
+  border-image: url('/UI/button_normal.png') 1;
 }
 
 .minecraft-button:hover {

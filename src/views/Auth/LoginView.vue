@@ -14,6 +14,10 @@ const form = reactive({
   password: '',
 })
 
+const backHome = () => {
+  router.push('/')
+}
+
 const onLogin = async () => {
   const result = await Login(form.username, form.password)
   if (result == null || result?.error) {
@@ -29,6 +33,22 @@ let box: HTMLElement | null = null
 const pool: Array<string> = []
 const stayTime = 8000
 const fadeTime = 400
+const unloadedImages: Array<string> = []
+
+const preloadImage = async (url: string) => {
+  if (unloadedImages.includes(url)) {
+    unloadedImages.splice(unloadedImages.indexOf(url), 1)
+  } else {
+    return
+  }
+  const promise = new Promise((resolve, reject) => {
+    const img = new Image()
+    img.onload = resolve
+    img.onerror = reject
+    img.src = url
+  })
+  await promise
+}
 
 const nextBg = (first: boolean = false) => {
   if (box == null) {
@@ -42,6 +62,7 @@ const nextBg = (first: boolean = false) => {
 
   const idx = Math.floor(Math.random() * pool.length)
   const url = pool.splice(idx, 1)[0]
+  preloadImage(url)
 
   box.style.opacity = '0'
   if (first) {
@@ -62,6 +83,9 @@ const nextBg = (first: boolean = false) => {
 onMounted(() => {
   // 背景轮播
   box = document.getElementById('login-bg')
+  for (let i = 1; i <= bgCount; i++) {
+    unloadedImages.push(import.meta.env.BASE_URL + `mc自然风景背景图-air/${i}.jpg`)
+  }
   nextBg(true)
 })
 </script>
@@ -86,6 +110,9 @@ onMounted(() => {
         @keyup.enter="onLogin"
       />
       <div class="button-area">
+        <MinecraftButtonClassic class="login-btn" @click="backHome"
+          >回到主页</MinecraftButtonClassic
+        >
         <MinecraftButtonClassic class="login-btn" @click="onLogin">登录</MinecraftButtonClassic>
       </div>
     </div>
@@ -152,6 +179,7 @@ onMounted(() => {
   margin-top: 1rem;
   display: flex;
   justify-content: flex-end;
+  gap: 1rem;
 }
 
 .login-btn {

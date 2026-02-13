@@ -11,7 +11,7 @@ const route = useRoute()
   <div class="page-area">
     <router-view v-slot="{ Component }">
       <transition name="fade" mode="out-in">
-        <div class="page-container" :key="route.fullPath">
+        <div class="page-container" :key="route.path">
           <component :is="Component" />
         </div>
       </transition>

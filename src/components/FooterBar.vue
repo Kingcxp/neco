@@ -59,6 +59,8 @@ onMounted(async () => {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  background-color: var(--background-color);
+  border-top: 1px solid #909399;
 }
 
 .footer-description {

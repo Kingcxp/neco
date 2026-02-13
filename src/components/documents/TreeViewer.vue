@@ -370,7 +370,7 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
         class="document-name"
         :style="{
           '--prefix': `${(layer + 1) * 0.8}rem`,
-          '--bg-color': 'rgba(0, 0, 0, 0.5)',
+          '--bg-color': 'rgba(255, 255, 255, 0.1)',
         }"
         @click="toggleExpand"
       >
@@ -399,7 +399,7 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
             class="document-name file"
             :style="{
               '--prefix': `${(layer + 2) * 0.8}rem`,
-              '--bg-color': `${selectedId === child.id ? 'black' : 'rgba(0, 0, 0, 0.5)'}`,
+              '--bg-color': `${selectedId === child.id ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'}`,
               '--display': `${selectedId === child.id ? 'block' : 'none'}`,
             }"
           >
@@ -432,7 +432,7 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
             class="document-name file"
             :style="{
               '--prefix': `${(layer + 2) * 0.8}rem`,
-              '--bg-color': `${selectedId === child.id ? 'black' : 'rgba(0, 0, 0, 0.5)'}`,
+              '--bg-color': `${selectedId === child.id ? 'rgba(255, 255, 255, 0.2)' : 'rgba(255, 255, 255, 0.1)'}`,
               '--display': `${selectedId === child.id ? 'block' : 'none'}`,
             }"
           >
@@ -530,10 +530,10 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
 .document-name:hover::after {
   position: absolute;
   content: '';
-  width: calc(100% + 0.8rem + var(--prefix));
+  width: calc(100% + 0.8rem + var(--prefix) - 24px);
   height: 100%;
   top: 0;
-  left: calc(0px - var(--prefix));
+  left: calc(12px - var(--prefix));
   background-color: var(--bg-color);
   z-index: 2;
 }
@@ -542,10 +542,10 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
   display: var(--display);
   position: absolute;
   content: '';
-  width: calc(100% + 0.8rem + var(--prefix));
+  width: calc(100% + 0.8rem + var(--prefix) - 24px);
   height: 100%;
   top: 0;
-  left: calc(0px - var(--prefix));
+  left: calc(12px - var(--prefix));
   background-color: var(--bg-color);
   z-index: 2;
 }
@@ -666,6 +666,6 @@ const onDocumentDrag = async (event: DragEvent, id: string) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(152, 203, 132, 0.15);
 }
 </style>

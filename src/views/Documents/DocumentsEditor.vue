@@ -431,9 +431,9 @@ onUnmounted(() => {
         maxWidth: `1280x`,
       }"
     >
-      <TreeViewer class="tree-viewer mc-border" v-model="selectedDocumentId" />
+      <TreeViewer class="tree-viewer" v-model="selectedDocumentId" />
       <div class="resizer" @mousedown.prevent="startResize" v-if="!isMobile"></div>
-      <MinecraftButton class="back-btn" @click="router.push('/management/document')">
+      <MinecraftButton :dark="true" class="back-btn" @click="router.push('/management/document')">
         ← 回到后台
       </MinecraftButton>
     </div>
@@ -510,14 +510,17 @@ onUnmounted(() => {
       </div>
       <div class="editor-btn-group">
         <MinecraftButton
+          :dark="true"
           class="editor-btn"
           @click="documentInstance.private = !documentInstance.private"
           >可见性：{{ documentInstance.private ? '私有' : '公开' }}
         </MinecraftButton>
-        <MinecraftButton class="editor-btn" @click="onPreviewClick"
+        <MinecraftButton :dark="true" class="editor-btn" @click="onPreviewClick"
           >预览：{{ documentInstance.preview ? '开启' : '关闭' }}
         </MinecraftButton>
-        <MinecraftButton class="editor-btn last" @click="commitDocument">保存</MinecraftButton>
+        <MinecraftButton :dark="true" class="editor-btn last" @click="commitDocument"
+          >保存</MinecraftButton
+        >
       </div>
     </div>
   </div>
@@ -557,7 +560,13 @@ onUnmounted(() => {
   width: 100%;
   overflow: auto;
   padding: 0.8rem;
-  padding-left: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+  border: 4px solid #222222;
+  box-shadow:
+    inset -4px -4px 0px 0px #3a3a3a,
+    inset 4px 4px 0px 0px #6b6b6b;
+  background-color: #111111;
 }
 
 .resizer-container {

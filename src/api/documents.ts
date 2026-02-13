@@ -1,4 +1,5 @@
 import { api, BASE_URL } from './api'
+import { LoginStatus, type UserStatus } from './auth'
 import type { NewsSegment } from './newslist'
 
 export interface DocumentNode {
@@ -116,37 +117,22 @@ export const CreateDocument = async (form: CreateDocumentForm): Promise<string |
 }
 
 export const GetDocumentLayer = async (parentId: string): Promise<DocumentNode[]> => {
+  const status: UserStatus = await LoginStatus()
   let result: DocumentNode[] = []
-  let privateFailed: boolean = false
   await api
-    .get(
-      `/documents/layer${(localStorage.getItem('token') || '')?.trim() === '' ? '' : '/private'}/${parentId}`,
-    )
+    .get(`/documents/layer${status === 'alive' ? '/private' : ''}/${parentId}`)
     .then((res) => {
       result = res.data.children as DocumentNode[]
     })
-    .catch(() => {
-      if ((localStorage.getItem('token') || '')?.trim() === '') {
-        privateFailed = true
-      }
-    })
-  if (privateFailed) {
-    await api
-      .get(`/documents/layer/${parentId}`)
-      .then((res) => {
-        result = res.data.children as DocumentNode[]
-      })
-      .catch(() => {})
-  }
+    .catch(() => {})
   return result
 }
 
 export const GetDocumentDetail = async (targetId: string): Promise<DocumentNode | null> => {
+  const status: UserStatus = await LoginStatus()
   let result: DocumentNode | null = null
   await api
-    .get(
-      `/documents${(localStorage.getItem('token') || '')?.trim() === '' ? '' : '/private'}/${targetId}`,
-    )
+    .get(`/documents${status === 'alive' ? '/private' : ''}/${targetId}`)
     .then((res) => {
       result = res.data as DocumentNode
     })
