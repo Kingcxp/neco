@@ -479,6 +479,10 @@ const scrollElement = document.documentElement
 .document-preview-catalog {
   min-width: 20%;
   height: min-content;
+
+  position: sticky;
+  top: 5rem;
+  left: 0;
 }
 
 .document-preview {
