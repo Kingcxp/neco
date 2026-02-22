@@ -515,6 +515,7 @@ const scrollElement = document.documentElement
     border-bottom: 2px solid #909399;
     margin-bottom: 1rem;
     padding-bottom: 1rem;
+    top: 0;
 
     position: relative;
   }
