@@ -48,6 +48,10 @@ onMounted(async () => {
           <GithubIcon class="link-icon" />
           Github源码
         </a>
+        <a class="link-item" href="https://seubcl.cn">
+          <img src="/friend-logo/bcl_logo.png" class="link-icon" />
+          东南大学六朝松信标社
+        </a>
       </div>
     </div>
   </div>
