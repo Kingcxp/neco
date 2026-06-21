@@ -51,7 +51,7 @@ onMounted(async () => {
           <picture class="news-detail-author-avatar">
             <img
               class="news-detail-author-avatar-img"
-              :src="newsDetail?.author.avatar"
+              :src="newsDetail?.author.avatar || '/nmo-logo-large.png'"
               alt="Author avatar"
             />
           </picture>
