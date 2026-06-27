@@ -247,13 +247,18 @@ export const UpdateNews = async (
   category: NewsTarget,
   entity: NewsEntity,
   content: NewsSegment[],
+  doesNotify = false,
+  notifySessionIds: string[] = [],
 ): Promise<string | null> => {
   let result = null
+
   await api
     .patch(`/news/${id}`, {
       category: category,
       entity: entity,
       content: content,
+      doesNotify: doesNotify,
+      notifySessionIds: notifySessionIds,
     })
     .then((response) => {
       if (response.data.error) {
@@ -261,10 +266,13 @@ export const UpdateNews = async (
       }
     })
     .catch((e) => {
-      if (e.response.data.error) {
+      if (e.response?.data?.error) {
         result = e.response.data.error
+      } else {
+        result = '请求失败'
       }
     })
+
   return result
 }
 

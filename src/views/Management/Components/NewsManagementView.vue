@@ -33,6 +33,7 @@ import MinecraftSwitch from '@/components/utils/MinecraftSwitch.vue'
 import PlusIcon from '@/components/icons/PlusIcon.vue'
 import PdfViewer from '@/components/PdfViewer.vue'
 import { EventBus } from '@/eventbus/EventBus'
+import { GetBotDashboardStatus, type BotConnection } from '@/api/bot'
 
 const editorToolbars = ref<ToolbarNames[]>([
   'bold',
@@ -256,6 +257,12 @@ const newsEndDate = ref<string | undefined>(nextYear(new Date()))
 
 const preview = ref(false)
 
+const notifyDialogVisible = ref(false)
+const notifyConnections = ref<BotConnection[]>([])
+const selectedNotifySessionIds = ref<string[]>([])
+const isLoadingNotifyConnections = ref(false)
+const pendingCommit = ref(false)
+
 const coverUploadVisible = ref(false)
 
 const onCoverUpload = async () => {
@@ -422,32 +429,100 @@ const deleteNews = async () => {
   }
 }
 
-const commitNews = async () => {
+const validateNewsBeforeCommit = () => {
   if (newsTitle.value.trim() === '') {
     toast.warning('请输入标题！')
-    return
+    return false
   }
+
   if (newsBrief.value.trim() === '') {
     toast.warning('请输入简介！')
-    return
+    return false
   }
+
   if (newsImage.value.trim() === '') {
     toast.warning('请上传封面！')
-    return
+    return false
   }
+
   if (newsText.value.length === 0) {
     toast.warning('请输入正文内容！')
-    return
+    return false
   }
+
   if (newsDate.value.trim() === '') {
     toast.warning('请输入开始时间！')
-    return
+    return false
   }
+
   if (newsType.value.trim() === '') {
     toast.warning('请选择类型！')
+    return false
+  }
+
+  return true
+}
+
+const loadNotifyConnections = async () => {
+  isLoadingNotifyConnections.value = true
+
+  const result = await GetBotDashboardStatus()
+
+  isLoadingNotifyConnections.value = false
+
+  if (!result) {
+    notifyConnections.value = []
+    selectedNotifySessionIds.value = []
+    toast.warning('无法获取 WebSocket 连接状态，将只能选择不推送。')
     return
   }
+
+  notifyConnections.value = result.connections || []
+  selectedNotifySessionIds.value = notifyConnections.value.map(
+    (connection) => connection.session_id,
+  )
+}
+
+const openNotifyDialog = async () => {
+  if (!validateNewsBeforeCommit()) {
+    return
+  }
+
   toContent()
+  await loadNotifyConnections()
+  notifyDialogVisible.value = true
+}
+
+const isNotifyConnectionSelected = (sessionId: string) => {
+  return selectedNotifySessionIds.value.includes(sessionId)
+}
+
+const toggleNotifyConnection = (sessionId: string) => {
+  if (isNotifyConnectionSelected(sessionId)) {
+    selectedNotifySessionIds.value = selectedNotifySessionIds.value.filter((id) => id !== sessionId)
+  } else {
+    selectedNotifySessionIds.value.push(sessionId)
+  }
+}
+
+const selectAllNotifyConnections = () => {
+  selectedNotifySessionIds.value = notifyConnections.value.map(
+    (connection) => connection.session_id,
+  )
+}
+
+const clearNotifyConnections = () => {
+  selectedNotifySessionIds.value = []
+}
+
+const commitNews = async (doesNotify = false, notifySessionIds: string[] = []) => {
+  if (!validateNewsBeforeCommit()) {
+    return
+  }
+
+  toContent()
+  pendingCommit.value = true
+
   const result = await UpdateNews(
     newsId.value,
     newsType.value,
@@ -460,16 +535,47 @@ const commitNews = async () => {
       image: newsImage.value,
     },
     newsContent.value,
+    doesNotify,
+    notifySessionIds,
   )
+
+  pendingCommit.value = false
+
   if (result) {
-    toast.error('上传文章失败！')
+    toast.error(`上传文章失败：${result}`)
   } else {
-    toast.success('上传文章成功！')
+    if (doesNotify) {
+      toast.success(`上传文章成功，已推送到 ${notifySessionIds.length} 个 WebSocket 连接！`)
+    } else {
+      toast.success('上传文章成功，未推送更新消息。')
+    }
+
     EventBus.emit('NewsManagement::refresh')
+
     if (newsId.value === localStorage.getItem('newsId')) {
       localStorage.removeItem('newsId')
     }
   }
+}
+
+const commitNewsWithoutNotify = async () => {
+  notifyDialogVisible.value = false
+  await commitNews(false, [])
+}
+
+const commitNewsWithNotify = async () => {
+  if (notifyConnections.value.length === 0) {
+    toast.warning('当前没有可推送的 WebSocket 连接。')
+    return
+  }
+
+  if (selectedNotifySessionIds.value.length === 0) {
+    toast.warning('请至少选择一个 WebSocket 连接，或选择“不推送”。')
+    return
+  }
+
+  notifyDialogVisible.value = false
+  await commitNews(true, selectedNotifySessionIds.value)
 }
 
 const onUploadImg = async (
@@ -523,7 +629,7 @@ const onUploadImg = async (
     style="margin-bottom: 100vh"
     class="management-tab-form"
     v-if="status !== 'none' && (userGroup.includes('admin') || userGroup.includes('news_admin'))"
-    @submit.prevent="commitNews"
+    @submit.prevent="openNotifyDialog"
   >
     <h2 class="management-tab-form-title">{{ status === 'edit' ? '编辑' : '新增' }}文章</h2>
     <div class="news-input-item" role="group" aria-labelledby="news-type-label">
@@ -781,9 +887,218 @@ const onUploadImg = async (
       <span></span>
     </template>
   </MinecraftDialog>
+  <MinecraftDialog
+    title="保存文章"
+    v-model="notifyDialogVisible"
+    cancelText="不推送"
+    confirmText="保存并推送"
+    @confirm="commitNewsWithNotify"
+  >
+    <div class="notify-options-container" aria-labelledby="notify-dialog-desc">
+      <p id="notify-dialog-desc" class="notify-options-desc">
+        文章将会先保存。你可以选择是否把本次更新推送到当前在线的 WebSocket 机器人连接。
+      </p>
+
+      <div class="notify-summary-card" role="status" aria-live="polite">
+        <span>当前在线连接：</span>
+        <strong>{{ notifyConnections.length }}</strong>
+        <span>已选择：</span>
+        <strong>{{ selectedNotifySessionIds.length }}</strong>
+      </div>
+
+      <div class="notify-button-row" v-if="notifyConnections.length > 0">
+        <MinecraftButtonClassic class="notify-action-button" @click="selectAllNotifyConnections">
+          全选
+        </MinecraftButtonClassic>
+
+        <MinecraftButtonClassic class="notify-action-button" @click="clearNotifyConnections">
+          全不选
+        </MinecraftButtonClassic>
+      </div>
+
+      <p v-if="isLoadingNotifyConnections" class="notify-options-desc">
+        正在读取 WebSocket 连接状态……
+      </p>
+
+      <p v-else-if="notifyConnections.length === 0" class="notify-warning-text">
+        当前没有在线 WebSocket 连接。你仍然可以保存文章，但不会推送更新消息。
+      </p>
+
+      <div v-else class="notify-connection-list" role="list" aria-label="可推送的 WebSocket 连接">
+        <button
+          v-for="connection in notifyConnections"
+          :key="connection.session_id"
+          type="button"
+          class="notify-connection-item"
+          :class="{ selected: isNotifyConnectionSelected(connection.session_id) }"
+          :aria-pressed="isNotifyConnectionSelected(connection.session_id)"
+          @click="toggleNotifyConnection(connection.session_id)"
+        >
+          <span class="notify-connection-main">
+            <strong>{{ connection.identifier || '未命名机器人' }}</strong>
+            <span>{{ connection.token_name }}</span>
+          </span>
+
+          <span class="notify-connection-sub">
+            <span>会话：{{ connection.session_id.slice(0, 8) }}...</span>
+            <span>连接时间：{{ connection.connected }}</span>
+          </span>
+
+          <span class="notify-connection-check" aria-hidden="true">
+            {{ isNotifyConnectionSelected(connection.session_id) ? '✓ 已选择' : '○ 未选择' }}
+          </span>
+        </button>
+      </div>
+
+      <p class="notify-warning-text">
+        如果选择“不推送”，文章只会保存，不会向任何机器人发送更新通知。
+      </p>
+    </div>
+
+    <template v-slot:footer>
+      <div class="notify-dialog-footer">
+        <MinecraftButtonClassic class="notify-footer-button" @click="commitNewsWithoutNotify">
+          不推送
+        </MinecraftButtonClassic>
+
+        <MinecraftButtonClassic class="notify-footer-button" @click="notifyDialogVisible = false">
+          取消
+        </MinecraftButtonClassic>
+
+        <MinecraftButtonClassic
+          class="notify-footer-button"
+          :disabled="pendingCommit || notifyConnections.length === 0"
+          @click="commitNewsWithNotify"
+        >
+          保存并推送
+        </MinecraftButtonClassic>
+      </div>
+    </template>
+  </MinecraftDialog>
 </template>
 
 <style lang="css" scoped>
+.notify-options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.notify-options-desc {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.notify-summary-card {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  color: #fff;
+  background-color: #2e2e2e;
+  border: 2px solid #1a1a1a;
+  box-shadow:
+    inset -2px -2px 0 0 #1f1f1f,
+    inset 2px 2px 0 0 #454545;
+}
+
+.notify-button-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.notify-action-button {
+  width: 6rem;
+}
+
+.notify-connection-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-height: 18rem;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: #202020;
+  border: 2px solid #111;
+}
+
+.notify-connection-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: left;
+  padding: 0.75rem;
+  color: #eee;
+  background-color: #303030;
+  border: 2px solid #111;
+  cursor: pointer;
+  font: inherit;
+}
+
+.notify-connection-item:hover,
+.notify-connection-item.selected {
+  background-color: rgba(100, 100, 255, 0.25);
+}
+
+.notify-connection-item:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+
+.notify-connection-main,
+.notify-connection-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.notify-connection-main strong {
+  color: #fff;
+}
+
+.notify-connection-sub {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.9rem;
+}
+
+.notify-connection-check {
+  color: #c6f6b6;
+}
+
+.notify-warning-text {
+  margin: 0;
+  color: #f0c36a;
+}
+
+.notify-dialog-footer {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--minecraft-gray-light);
+}
+
+.notify-footer-button {
+  width: 8rem;
+  font-size: 1.1rem;
+}
+
+@media screen and (max-width: 768px) {
+  .notify-button-row,
+  .notify-dialog-footer {
+    flex-direction: column;
+  }
+
+  .notify-action-button,
+  .notify-footer-button {
+    width: 100%;
+  }
+}
+
 .upload-button,
 .news-image-picture {
   border: 0;

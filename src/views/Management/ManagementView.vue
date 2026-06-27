@@ -85,6 +85,13 @@ onUnmounted(() => {
         >文档管理</MinecraftButtonClassic
       >
 
+      <MinecraftButtonClassic
+        class="management-nav"
+        :activated="route.path.endsWith('/management/bot')"
+        @click="router.replace('/management/bot')"
+        >机器人连接</MinecraftButtonClassic
+      >
+
       <div style="display: flex; flex-direction: column; margin-top: auto">
         <MinecraftButtonClassic class="management-nav" @click="router.push('/')"
           >回到主页</MinecraftButtonClassic

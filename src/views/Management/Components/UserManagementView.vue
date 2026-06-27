@@ -27,6 +27,8 @@ const adminToText = (admin: string): string => {
       return '服务器管理'
     case 'document_admin':
       return '文档管理'
+    case 'bot_admin':
+      return '机器人管理'
     default:
       return ''
   }
@@ -96,6 +98,7 @@ const editAdminSwitch = ref(true)
 const editNewsAdminSwitch = ref(false)
 const editServerAdminSwitch = ref(false)
 const editDocumentAdminSwitch = ref(false)
+const editBotAdminSwitch = ref(false)
 
 const editUserTags = ref([
   {
@@ -120,6 +123,7 @@ const saveEditUser = async () => {
   if (editNewsAdminSwitch.value) group.push('news_admin')
   if (editServerAdminSwitch.value) group.push('server_admin')
   if (editDocumentAdminSwitch.value) group.push('document_admin')
+  if (editBotAdminSwitch.value) group.push('bot_admin')
 
   const result = await UpdateUserInfo(editUsername.value, group, editUserTags.value)
   if (!result) {
@@ -137,6 +141,7 @@ const loadEditUser = (user: UserEntity, index: number) => {
   editNewsAdminSwitch.value = (user.group || []).includes('news_admin')
   editServerAdminSwitch.value = (user.group || []).includes('server_admin')
   editDocumentAdminSwitch.value = (user.group || []).includes('document_admin')
+  editBotAdminSwitch.value = (user.group || []).includes('bot_admin')
   editUserTags.value = JSON.parse(JSON.stringify(user.tags || []))
   editInputTagText.value = ''
   editInputTagColor.value = '#E6A23C'
@@ -537,7 +542,13 @@ onMounted(() => {
             id="edit-admin-switch"
             class="user-input-switch"
             v-model="editAdminSwitch"
-            @on="editNewsAdminSwitch = editServerAdminSwitch = editDocumentAdminSwitch = false"
+            @on="
+              editNewsAdminSwitch =
+                editServerAdminSwitch =
+                editDocumentAdminSwitch =
+                editBotAdminSwitch =
+                  false
+            "
           />
           <label class="user-switch-label" for="edit-admin-switch"> 超级管理 </label>
         </div>
@@ -567,6 +578,15 @@ onMounted(() => {
             @on="editAdminSwitch = false"
           />
           <label class="user-switch-label" for="edit-document-admin-switch"> 文档管理 </label>
+        </div>
+        <div class="user-switch-item">
+          <MinecraftSwitch
+            id="edit-bot-admin-switch"
+            class="user-input-switch"
+            v-model="editBotAdminSwitch"
+            @on="editAdminSwitch = false"
+          />
+          <label class="user-switch-label" for="edit-bot-admin-switch"> 机器人管理 </label>
         </div>
       </div>
       <div class="change-user-info-item" style="grid-column: span 2">
