@@ -110,6 +110,11 @@ const editUserTags = ref([
 const editInputTagText = ref('')
 const editInputTagColor = ref('#E6A23C')
 const editInputTagBgColor = ref('rgba(230, 162, 60, 0.1)')
+const editTagLiveMessage = ref('')
+
+const editTagPreviewText = computed(() => {
+  return editInputTagText.value.trim() || '标签预览'
+})
 
 const soundOn = () => {
   const audio = new Audio('/button.click.ogg')
@@ -151,22 +156,46 @@ const loadEditUser = (user: UserEntity, index: number) => {
 }
 
 const editAppendTag = () => {
-  if (editInputTagText.value.trim() === '') {
-    toast.warning('请输入标签！')
+  const text = editInputTagText.value.trim()
+  const color = editInputTagColor.value.trim()
+  const tagColor = editInputTagBgColor.value.trim()
+
+  if (text === '') {
+    toast.warning('请输入标签文字！')
     return
   }
+
+  if (editUserTags.value.some((tag) => tag.text === text)) {
+    toast.warning('这个标签已经存在了！')
+    return
+  }
+
   editUserTags.value.push({
-    text: editInputTagText.value,
-    color: editInputTagColor.value,
-    tagColor: editInputTagBgColor.value,
+    text,
+    color: color || '#E6A23C',
+    tagColor: tagColor || 'rgba(230, 162, 60, 0.1)',
   })
+
+  editTagLiveMessage.value = `已添加标签：${text}`
   editInputTagText.value = ''
   editInputTagColor.value = '#E6A23C'
   editInputTagBgColor.value = 'rgba(230, 162, 60, 0.1)'
 }
 
 const editDeleteTag = (index: number) => {
+  const removed = editUserTags.value[index]?.text
   editUserTags.value.splice(index, 1)
+
+  if (removed) {
+    editTagLiveMessage.value = `已删除标签：${removed}`
+  }
+}
+
+const resetEditTagInput = () => {
+  editInputTagText.value = ''
+  editInputTagColor.value = '#E6A23C'
+  editInputTagBgColor.value = 'rgba(230, 162, 60, 0.1)'
+  editTagLiveMessage.value = '已重置标签输入。'
 }
 
 const oldPasswordInput = ref('')
@@ -504,141 +533,228 @@ onMounted(() => {
   </section>
 
   <MinecraftDialog title="修改用户信息" v-model="editUserDialogVisible" @confirm="saveEditUser">
-    <div class="change-user-info-container">
-      <div class="change-user-info-item">
-        <text class="change-user-info-title">头像</text>
-        <button
-          v-if="editUsername === username"
-          type="button"
-          class="user-avatar"
-          style="width: 4rem; height: 4rem"
-          aria-label="修改用户头像"
-          @click="onChangeAvatar"
-        >
-          <img class="avatar-img" style="width: 4rem; height: 4rem" :src="editAvatar" alt="" />
-        </button>
-        <img
-          class="avatar-img"
-          v-else
-          style="width: 4rem; height: 4rem"
-          :src="editAvatar"
-          alt="用户头像"
-        />
-      </div>
-      <div class="change-user-info-item">
-        <label class="change-user-info-title" for="edit-username-input"> 用户名 </label>
+    <div class="edit-user-dialog">
+      <section
+        class="edit-user-card edit-user-profile-card"
+        aria-labelledby="edit-user-basic-title"
+      >
+        <div class="edit-user-section-header">
+          <h3 id="edit-user-basic-title" class="edit-user-section-title">基础信息</h3>
+          <span class="edit-user-section-desc">修改用户头像与用户名</span>
+        </div>
 
-        <MinecraftInput
-          id="edit-username-input"
-          class="user-input-field"
-          placeholder="输入用户名"
-          v-model="editUsername"
-        />
-      </div>
-      <div class="change-user-info-item">
-        <text class="change-user-info-title">权限</text>
-        <div class="user-switch-item">
-          <MinecraftSwitch
-            id="edit-admin-switch"
-            class="user-input-switch"
-            v-model="editAdminSwitch"
-            @on="
-              editNewsAdminSwitch =
-                editServerAdminSwitch =
-                editDocumentAdminSwitch =
-                editBotAdminSwitch =
-                  false
-            "
-          />
-          <label class="user-switch-label" for="edit-admin-switch"> 超级管理 </label>
-        </div>
-        <div class="user-switch-item">
-          <MinecraftSwitch
-            id="edit-article-admin-switch"
-            class="user-input-switch"
-            v-model="editNewsAdminSwitch"
-            @on="editAdminSwitch = false"
-          />
-          <label class="user-switch-label" for="edit-article-admin-switch"> 文章管理 </label>
-        </div>
-        <div class="user-switch-item">
-          <MinecraftSwitch
-            id="edit-server-admin-switch"
-            class="user-input-switch"
-            v-model="editServerAdminSwitch"
-            @on="editAdminSwitch = false"
-          />
-          <label class="user-switch-label" for="edit-server-admin-switch"> 服务器管理 </label>
-        </div>
-        <div class="user-switch-item">
-          <MinecraftSwitch
-            id="edit-document-admin-switch"
-            class="user-input-switch"
-            v-model="editDocumentAdminSwitch"
-            @on="editAdminSwitch = false"
-          />
-          <label class="user-switch-label" for="edit-document-admin-switch"> 文档管理 </label>
-        </div>
-        <div class="user-switch-item">
-          <MinecraftSwitch
-            id="edit-bot-admin-switch"
-            class="user-input-switch"
-            v-model="editBotAdminSwitch"
-            @on="editAdminSwitch = false"
-          />
-          <label class="user-switch-label" for="edit-bot-admin-switch"> 机器人管理 </label>
-        </div>
-      </div>
-      <div class="change-user-info-item" style="grid-column: span 2">
-        <text class="change-user-info-title">标签</text>
-        <div class="user-input-with-label">
-          <label class="user-input-title" for="edit-tag-text-input"> 标签文字 </label>
-
-          <MinecraftInput
-            id="edit-tag-text-input"
-            class="user-input-box"
-            placeholder="回车以添加"
-            v-model="editInputTagText"
-            @keyup.enter="editAppendTag"
-          />
-        </div>
-        <div class="user-input-with-label">
-          <label class="user-input-title" for="edit-tag-text-color-input"> 文字颜色 </label>
-
-          <MinecraftInput
-            id="edit-tag-text-color-input"
-            class="user-input-box"
-            placeholder="标签文字颜色"
-            v-model="editInputTagColor"
-            @keyup.enter="editAppendTag"
-          />
-        </div>
-        <div class="user-input-with-label">
-          <label class="user-input-title" for="edit-tag-background-color-input"> 背景颜色 </label>
-
-          <MinecraftInput
-            id="edit-tag-background-color-input"
-            class="user-input-box"
-            placeholder="标签背景颜色"
-            v-model="editInputTagBgColor"
-            @keyup.enter="editAppendTag"
-          />
-        </div>
-        <div class="tags-container">
-          <div
-            class="tag"
-            v-for="(tag, index) in editUserTags"
-            :key="index"
-            :style="{
-              color: tag.color,
-              backgroundColor: tag.tagColor,
-            }"
+        <div class="edit-user-profile-main">
+          <button
+            v-if="editUsername === username"
+            type="button"
+            class="edit-user-avatar-button"
+            aria-label="修改当前用户头像"
+            @click="onChangeAvatar"
           >
-            <text class="tag-text">{{ tag.text }}</text>
-            <DeleteIcon class="tag-delete-icon" @click="editDeleteTag(index)" />
+            <img class="edit-user-avatar-img" :src="editAvatar" alt="" />
+          </button>
+
+          <img v-else class="edit-user-avatar-img" :src="editAvatar" alt="用户头像" />
+
+          <div class="edit-user-field">
+            <label class="edit-user-label" for="edit-username-input">用户名</label>
+
+            <MinecraftInput
+              id="edit-username-input"
+              class="edit-user-input"
+              placeholder="输入用户名"
+              autocomplete="username"
+              v-model="editUsername"
+            />
+
+            <p class="edit-user-help-text">用户名用于登录和后台识别，请谨慎修改。</p>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section class="edit-user-card" aria-labelledby="edit-user-permission-title">
+        <div class="edit-user-section-header">
+          <h3 id="edit-user-permission-title" class="edit-user-section-title">权限配置</h3>
+          <span class="edit-user-section-desc">超级管理与细分权限互斥</span>
+        </div>
+
+        <div class="edit-permission-grid">
+          <div class="edit-permission-item">
+            <MinecraftSwitch
+              id="edit-admin-switch"
+              class="user-input-switch"
+              v-model="editAdminSwitch"
+              @on="
+                editNewsAdminSwitch =
+                  editServerAdminSwitch =
+                  editDocumentAdminSwitch =
+                  editBotAdminSwitch =
+                    false
+              "
+            />
+            <label class="edit-permission-label" for="edit-admin-switch">
+              <strong>超级管理</strong>
+              <span>拥有全部后台权限</span>
+            </label>
+          </div>
+
+          <div class="edit-permission-item">
+            <MinecraftSwitch
+              id="edit-article-admin-switch"
+              class="user-input-switch"
+              v-model="editNewsAdminSwitch"
+              @on="editAdminSwitch = false"
+            />
+            <label class="edit-permission-label" for="edit-article-admin-switch">
+              <strong>文章管理</strong>
+              <span>管理新闻、活动与公告</span>
+            </label>
+          </div>
+
+          <div class="edit-permission-item">
+            <MinecraftSwitch
+              id="edit-server-admin-switch"
+              class="user-input-switch"
+              v-model="editServerAdminSwitch"
+              @on="editAdminSwitch = false"
+            />
+            <label class="edit-permission-label" for="edit-server-admin-switch">
+              <strong>服务器管理</strong>
+              <span>管理服务器列表与状态</span>
+            </label>
+          </div>
+
+          <div class="edit-permission-item">
+            <MinecraftSwitch
+              id="edit-document-admin-switch"
+              class="user-input-switch"
+              v-model="editDocumentAdminSwitch"
+              @on="editAdminSwitch = false"
+            />
+            <label class="edit-permission-label" for="edit-document-admin-switch">
+              <strong>文档管理</strong>
+              <span>管理文档与附件资源</span>
+            </label>
+          </div>
+
+          <div class="edit-permission-item">
+            <MinecraftSwitch
+              id="edit-bot-admin-switch"
+              class="user-input-switch"
+              v-model="editBotAdminSwitch"
+              @on="editAdminSwitch = false"
+            />
+            <label class="edit-permission-label" for="edit-bot-admin-switch">
+              <strong>机器人管理</strong>
+              <span>管理 Bot Token 与连接状态</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="edit-user-card" aria-labelledby="edit-user-tag-title">
+        <div class="edit-user-section-header">
+          <h3 id="edit-user-tag-title" class="edit-user-section-title">用户标签</h3>
+          <span class="edit-user-section-desc">标签会显示在用户卡片和当前用户信息中</span>
+        </div>
+
+        <p class="sr-only" aria-live="polite">{{ editTagLiveMessage }}</p>
+
+        <div class="edit-tag-preview-row">
+          <span class="edit-user-label">预览</span>
+
+          <div
+            class="edit-tag-preview"
+            :style="{
+              color: editInputTagColor,
+              backgroundColor: editInputTagBgColor,
+            }"
+          >
+            {{ editTagPreviewText }}
+          </div>
+        </div>
+
+        <div class="edit-tag-editor">
+          <div class="edit-tag-field">
+            <label class="edit-user-label" for="edit-tag-text-input">标签文字</label>
+
+            <MinecraftInput
+              id="edit-tag-text-input"
+              class="edit-user-input"
+              placeholder="例如 管理员 / Builder / VIP"
+              v-model="editInputTagText"
+              @keyup.enter="editAppendTag"
+            />
+          </div>
+
+          <div class="edit-tag-field">
+            <label class="edit-user-label" for="edit-tag-text-color-input">文字颜色</label>
+
+            <MinecraftInput
+              id="edit-tag-text-color-input"
+              class="edit-user-input"
+              placeholder="#E6A23C"
+              v-model="editInputTagColor"
+              @keyup.enter="editAppendTag"
+            />
+          </div>
+
+          <div class="edit-tag-field">
+            <label class="edit-user-label" for="edit-tag-background-color-input">背景颜色</label>
+
+            <MinecraftInput
+              id="edit-tag-background-color-input"
+              class="edit-user-input"
+              placeholder="rgba(230, 162, 60, 0.1)"
+              v-model="editInputTagBgColor"
+              @keyup.enter="editAppendTag"
+            />
+          </div>
+
+          <div class="edit-tag-actions">
+            <MinecraftButtonClassic class="edit-tag-action-button" @click="editAppendTag">
+              添加标签
+            </MinecraftButtonClassic>
+
+            <MinecraftButtonClassic class="edit-tag-action-button" @click="resetEditTagInput">
+              重置输入
+            </MinecraftButtonClassic>
+          </div>
+        </div>
+
+        <div class="edit-tag-list-block">
+          <div class="edit-tag-list-title">
+            <span>已有标签</span>
+            <span>{{ editUserTags.length }} 个</span>
+          </div>
+
+          <div v-if="editUserTags.length > 0" class="edit-tag-list" role="list">
+            <div
+              class="edit-tag-chip"
+              v-for="(tag, index) in editUserTags"
+              :key="`${tag.text}-${index}`"
+              role="listitem"
+              :style="{
+                color: tag.color,
+                backgroundColor: tag.tagColor,
+              }"
+            >
+              <span class="edit-tag-chip-text">{{ tag.text }}</span>
+
+              <button
+                type="button"
+                class="edit-tag-delete-button"
+                :aria-label="`删除标签 ${tag.text}`"
+                @click="editDeleteTag(index)"
+              >
+                <DeleteIcon class="edit-tag-delete-icon" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+
+          <p v-else class="edit-user-help-text">当前没有标签，可以在上方输入后点击“添加标签”。</p>
+        </div>
+      </section>
     </div>
   </MinecraftDialog>
   <MinecraftDialog title="修改头像" v-model="avatarOptionsVisible">
@@ -945,78 +1061,8 @@ onMounted(() => {
   user-select: none;
 }
 
-.change-user-info-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 1rem;
-}
-
-.change-user-info-item {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.change-user-info-title {
-  font-size: 1.2rem;
-  color: white;
-  user-select: none;
-}
-
-.user-switch-item {
-  display: flex;
-  align-items: center;
-}
-
 .user-input-switch {
   scale: 0.8;
-}
-
-.tags-container {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.tag {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px 8px;
-  background-color: #333;
-  border-radius: 4px;
-}
-
-.tag-text {
-  user-select: none;
-  font-size: 0.8rem;
-  text-wrap: nowrap;
-}
-
-.tag-delete-icon {
-  width: 1rem;
-  height: 1rem;
-  margin-left: 0.5rem;
-  color: #f56c6c;
-  cursor: pointer;
-  user-select: none;
-}
-
-.user-input-with-label {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.user-input-title {
-  color: rgba(255, 255, 255, 0.8);
-  user-select: none;
-  text-wrap: nowrap;
-}
-
-.user-input-box {
-  width: 80%;
 }
 
 .avatar-options-container {
@@ -1086,5 +1132,278 @@ onMounted(() => {
 .delete-user-info-text {
   font-size: 1.2rem;
   user-select: none;
+}
+
+.edit-user-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: min(72vw, 48rem);
+  max-width: 100%;
+}
+
+.edit-user-card {
+  padding: 1rem;
+  background-color: #2e2e2e;
+  border: 2px solid #1a1a1a;
+  box-shadow:
+    inset -2px -2px 0 0 #1f1f1f,
+    inset 2px 2px 0 0 #454545;
+}
+
+.edit-user-profile-card {
+  background-color: #303030;
+}
+
+.edit-user-section-header {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.edit-user-section-title {
+  margin: 0;
+  color: #fff;
+  font-size: 1.15rem;
+  line-height: 1.2rem;
+}
+
+.edit-user-section-desc {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.85rem;
+}
+
+.edit-user-profile-main {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.edit-user-avatar-button {
+  width: 5rem;
+  height: 5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.edit-user-avatar-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
+}
+
+.edit-user-avatar-img {
+  width: 5rem;
+  height: 5rem;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 50%;
+  outline: 2px solid var(--minecraft-gray-light);
+  user-select: none;
+}
+
+.edit-user-field,
+.edit-tag-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.edit-user-label {
+  color: #fff;
+  font-size: 0.95rem;
+  user-select: none;
+}
+
+.edit-user-input {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.edit-user-help-text {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.85rem;
+  line-height: 1.25rem;
+}
+
+.edit-permission-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 0.75rem;
+}
+
+.edit-permission-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.4rem;
+  padding: 0.55rem 0.65rem;
+  background-color: rgba(0, 0, 0, 0.18);
+  border: 1px solid #4a4a4a;
+  box-shadow:
+    inset -1px -1px 0 0 #111,
+    inset 1px 1px 0 0 #666;
+}
+
+.edit-permission-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+.edit-permission-label strong {
+  font-size: 0.95rem;
+  line-height: 1rem;
+}
+
+.edit-permission-label span {
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.78rem;
+  line-height: 1rem;
+}
+
+.edit-tag-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.edit-tag-preview {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 1.5rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
+.edit-tag-editor {
+  display: grid;
+  grid-template-columns: minmax(12rem, 1.4fr) minmax(8rem, 1fr) minmax(10rem, 1.2fr);
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.edit-tag-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.edit-tag-action-button {
+  width: 7rem;
+}
+
+.edit-tag-list-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #555;
+}
+
+.edit-tag-list-title {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+  user-select: none;
+}
+
+.edit-tag-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.edit-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 1.75rem;
+  padding: 0.2rem 0.25rem 0.2rem 0.55rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.edit-tag-chip-text {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+.edit-tag-delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin-left: 0.35rem;
+  padding: 0;
+  border: 0;
+  color: #f56c6c;
+  background: transparent;
+  cursor: pointer;
+}
+
+.edit-tag-delete-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+}
+
+.edit-tag-delete-icon {
+  width: 1rem;
+  height: 1rem;
+  user-select: none;
+}
+
+@media screen and (max-width: 768px) {
+  .edit-user-dialog {
+    width: 100%;
+  }
+
+  .edit-user-profile-main {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-user-avatar-button,
+  .edit-user-avatar-img {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+
+  .edit-tag-editor {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-tag-actions {
+    justify-content: stretch;
+  }
+
+  .edit-tag-action-button {
+    width: 100%;
+  }
 }
 </style>
